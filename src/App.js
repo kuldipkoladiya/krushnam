@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Firstpage from './components/firstpage';
+import InvoicePage from './components/InvoicePage';
+import SearchPage from './components/searchPage';
+import MonthlyBillPage from './components/mounthly-bill'
+import AccountsPage from './components/acccounts'
+import PaymentPage from './components/paymentPage'
+import ExtraBillpage from './components/extrabillpage'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => (
+    <Router>
+        <Routes>
+            <Route path="/" element={<Firstpage />} />
+            <Route path="/invoice" element={<InvoicePage />} />
+            <Route path="/search" element={<SearchPage />} /> {/* Add new route */}
+            <Route path="/monthly-bill" element={<MonthlyBillPage />} />
+            <Route path="/accounts" element={<AccountsPage />} />
+            <Route path="/payments" element={<PaymentPage />} />
+            <Route path="/extra" element={<ExtraBillpage />} />
+        </Routes>
+    </Router>
+);
 
 export default App;
