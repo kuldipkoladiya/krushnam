@@ -7,6 +7,8 @@ import MonthlyBillPage from './components/mounthly-bill'
 import AccountsPage from './components/acccounts'
 import PaymentPage from './components/paymentPage'
 import ExtraBillpage from './components/extrabillpage'
+import PayablePage from './components/payablePage'
+
 
 const App = () => (
     <Router>
@@ -18,6 +20,7 @@ const App = () => (
             <Route path="/accounts" element={<AccountsPage />} />
             <Route path="/payments" element={<PaymentPage />} />
             <Route path="/extra" element={<ExtraBillpage />} />
+            <Route path="/Payable" element={<PayablePage />} />
         </Routes>
     </Router>
 );

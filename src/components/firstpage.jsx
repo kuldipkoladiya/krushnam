@@ -424,13 +424,13 @@ const Firstpage = () => {
                 <img src={name} alt="Shreeji" className="h-16" />
             </div>
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-4xl font-bold text-purple-600">Invoice</h1>
-                <div className="space-x-4">
+                <div className="space-x-5">
                     <button type="button" className="bg-orange-400 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/extra')}>Other Bills</button>
                     <button type="button" className="bg-orange-400 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/payments')}>Customer Payments</button>
                     <button type="button" className="bg-blue-600 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/search')}>Search Invoices</button>
                     <button type="button" className="bg-purple-600 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/monthly-bill')}>Get Monthly Bill</button>
                     <button type="button" className="bg-green-600 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/accounts')}>Accounts</button>
+                    <button type="button" className="bg-green-600 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/Payable')}>Payable</button>
                 </div>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6" onKeyDown={handleKeyDown}>
