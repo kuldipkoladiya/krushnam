@@ -419,158 +419,209 @@ const Firstpage = () => {
 
 
     return (
-        <div className="p-8 max-w-4xl mx-auto bg-[#F8F8F8] rounded-lg shadow-md">
-            <div className="flex flex-col items-center justify-center mb-6">
-                <img src={name} alt="Shreeji" className="h-16" />
-            </div>
-            <div className="flex justify-between items-center mb-6">
-                <div className="space-x-5">
-                    <button type="button" className="bg-orange-400 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/extra')}>Other Bills</button>
-                    <button type="button" className="bg-orange-400 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/payments')}>Customer Payments</button>
-                    <button type="button" className="bg-blue-600 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/search')}>Search Invoices</button>
-                    <button type="button" className="bg-purple-600 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/monthly-bill')}>Get Monthly Bill</button>
-                    <button type="button" className="bg-green-600 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/accounts')}>Accounts</button>
-                    <button type="button" className="bg-green-600 text-white py-2 px-4 rounded-lg text-sm" onClick={() => navigate('/Payable')}>Payable</button>
+        <div className="p-8 bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center">
+            <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl">
+                <div className="flex flex-col items-center justify-center mb-8">
+                    <img src={name} alt="Shreeji" className="h-20 mb-4" />
                 </div>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-6" onKeyDown={handleKeyDown}>
-                <div className="bg-white p-6 rounded-lg shadow-md border border-gray-300">
-                    <h2 className="text-xl font-semibold mb-4">Bill Information</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Bill No:</label>
-                            <input type="text" value={billNo} readOnly className="w-full border rounded-lg p-3 mt-1 bg-gray-100 text-gray-900" />
-                        </div>
-                        <div className="relative">
-                            <label className="block text-sm font-medium text-gray-700">Customer Name:</label>
-                            <input type="text" value={customerName}onKeyDown={handleKeyDown} onChange={handleCustomerNameChange} className="w-full border rounded-lg p-3 mt-1 bg-white" placeholder="Customer Name" />
-                            {showSuggestions && customerSuggestions.length > 0 && (
-                                <ul ref={suggestionBoxRef} className="absolute bg-white border border-gray-300 mt-1 w-full max-h-48 overflow-y-auto z-10 shadow-md">
-                                    {customerSuggestions.map((customer, index) => (
-                                        <li key={customer.id} className={`p-2 cursor-pointer ${selectedSuggestionIndex === index ? 'bg-gray-200' : ''}`} onClick={() => handleSuggestionClick(customer)}>
-                                            {customer.name}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Mobile No:</label>
-                            <input type="text" value={mobileNo} onChange={(e) => setMobileNo(e.target.value)} className="w-full border rounded-lg p-3 mt-1 bg-white" placeholder="Mobile Number" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Bill Date:</label>
-                            <input type="date" value={billDate} onChange={(e) => setBillDate(e.target.value)} className="w-full border rounded-lg p-3 mt-1 bg-white" />
+
+                {/* Navigation Buttons */}
+                <div className="flex flex-wrap justify-center space-x-4 mb-12">
+                    {[
+                        { label: "Other Bills", route: "/extra", gradient: "from-yellow-400 to-orange-400" },
+                        { label: "Customer Payments", route: "/payments", gradient: "from-purple-400 to-pink-400" },
+                        { label: "Search Invoices", route: "/search", gradient: "from-blue-600 to-blue-400" },
+                        { label: "Get Monthly Bill", route: "/monthly-bill", gradient: "from-purple-600 to-purple-400" },
+                        { label: "Accounts", route: "/accounts", gradient: "from-green-600 to-green-400" },
+                        { label: "Payable", route: "/Payable", gradient: "from-indigo-600 to-indigo-400" },
+                    ].map((button) => (
+                        <button
+                            key={button.label}
+                            className={`bg-gradient-to-r ${button.gradient} text-white py-3 px-5 rounded-full shadow-lg text-sm transform transition-transform hover:scale-105`}
+                            onClick={() => navigate(button.route)}
+                        >
+                            {button.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Invoice Form */}
+                <form onSubmit={handleSubmit} className="space-y-10" onKeyDown={handleKeyDown}>
+                    <div className="bg-gray-50 p-8 rounded-lg shadow-md border border-gray-300">
+                        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Bill Information</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-600">Bill No:</label>
+                                <input
+                                    type="text"
+                                    value={billNo}
+                                    readOnly
+                                    className="w-full border-2 border-gray-300 p-4 mt-2 bg-gray-100 text-gray-900 shadow-sm rounded-full focus:outline-none  focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div className="relative">
+                                <label className="block text-sm font-medium text-gray-600">Customer Name:</label>
+                                <input
+                                    type="text"
+                                    value={customerName}
+                                    onChange={handleCustomerNameChange}
+                                    className="w-full border-2 border-gray-300 rounded-full p-4 mt-2 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Enter Customer Name"
+                                />
+                                {showSuggestions && customerSuggestions.length > 0 && (
+                                    <ul className="absolute bg-white border border-gray-300 mt-2 w-full max-h-48 overflow-y-auto z-10 shadow-md rounded-lg">
+                                        {customerSuggestions.map((customer, index) => (
+                                            <li
+                                                key={customer.id}
+                                                className={`p-2 cursor-pointer hover:bg-gray-100 ${
+                                                    selectedSuggestionIndex === index ? "bg-gray-200" : ""
+                                                }`}
+                                                onClick={() => handleSuggestionClick(customer)}
+                                            >
+                                                {customer.name}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-600">Mobile No:</label>
+                                <input
+                                    type="text"
+                                    value={mobileNo}
+                                    onChange={(e) => setMobileNo(e.target.value)}
+                                    className="w-full border-2 border-gray-300 rounded-full p-4 mt-2 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Enter Mobile No."
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-600">Bill Date:</label>
+                                <input
+                                    type="date"
+                                    value={billDate}
+                                    onChange={(e) => setBillDate(e.target.value)}
+                                    className="w-full border-2 border-gray-300 rounded-full p-4 mt-2 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="bg-white p-6 rounded-lg shadow-md border border-gray-300">
-                    <h2 className="text-xl font-semibold mb-4">Product Details</h2>
-                    {products.map((product, index) => (
-                        <div key={index} className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Product:</label>
-                                <select
-                                    onFocus={() => setActiveProductIndex(index)}
-                                    onKeyDown={handleKeyDown}
-                                    value={product.productId}
-                                    onChange={(e) => handleProductChange(index, 'productId', e.target.value)}
-                                    className="w-full border rounded-lg p-3 mt-1 bg-white"
-                                >
-                                    <option value="">Select Product</option>
-                                    {availableProducts.map((prod) => (
-                                        <option key={prod.id} value={prod.id}>
-                                            {prod.ProductName}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Quantity:</label>
-                                <input
-                                    type="number"
-                                    value={product.quantity}
-                                    onChange={(e) => handleProductChange(index, 'quantity', e.target.value)}
-                                    className="w-full border rounded-lg p-3 mt-1 bg-white"
-                                    placeholder="Quantity"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Price:</label>
-                                <input
-                                    type="number"
-                                    value={product.price}
-                                    onChange={(e) => handleProductChange(index, 'price', e.target.value)}
-                                    className="w-full border rounded-lg p-3 mt-1 bg-white"
-                                    placeholder="Price"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Extra Charges:</label>
-                                <input
-                                    type="number"
-                                    value={product.extraCharge}
-                                    onChange={(e) => handleProductChange(index, 'extraCharge', e.target.value)}
-                                    className="w-full border rounded-lg p-3 mt-1 bg-white"
-                                    placeholder="Extra Charges"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Total:</label>
-                                <input
-                                    type="number"
-                                    value={product.total}
-                                    readOnly
-                                    className="w-full border rounded-lg p-3 mt-1 bg-gray-100"
-                                />
-                            </div>
-                            {index === products.length - 1 && (
+                    {/* Product Section */}
+                    <div className="bg-gray-50 p-6 rounded-lg shadow-md border border-gray-300">
+                        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Product Details</h2>
+                        {products.map((product, index) => (
+                            <div key={index} className="grid grid-cols-2 md:grid-cols-6 gap-2 mb-6">
                                 <div>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleRemoveProduct(index)}
-                                        className="bg-red-500 text-white py-3 px-5 rounded-lg mt-6"
+                                    <label className="block text-sm font-medium text-gray-600">Product:</label>
+                                    <select
+                                        onFocus={() => setActiveProductIndex(index)}
+                                        value={product.productId}
+                                        onChange={(e) => handleProductChange(index, "productId", e.target.value)}
+                                        className="w-full border-2 border-gray-300 rounded-full p-4 mt-2 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     >
-                                        Remove
-                                    </button>
+                                        <option value="">Select Product</option>
+                                        {availableProducts.map((prod) => (
+                                            <option key={prod.id} value={prod.id}>
+                                                {prod.ProductName}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
-                            )}
-                        </div>
-                    ))}
-                    <button
-                        type="button"
-                        className="bg-green-600 text-white py-2 px-4 rounded-lg mt-6"
-                        onClick={handleAddProduct}
-                    >
-                        Add Product
-                    </button>
-                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-600">Quantity:</label>
+                                    <input
+                                        type="number"
+                                        value={product.quantity}
+                                        onChange={(e) => handleProductChange(index, "quantity", e.target.value)}
+                                        className="w-full border-2 border-gray-300 rounded-full p-4 mt-2 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Enter Quantity"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-600">Price:</label>
+                                    <input
+                                        type="number"
+                                        value={product.price}
+                                        onChange={(e) => handleProductChange(index, "price", e.target.value)}
+                                        className="w-full border-2 border-gray-300 rounded-full p-4 mt-2 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Enter Price"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-600">Extra Charges:</label>
+                                    <input
+                                        type="number"
+                                        value={product.extraCharge}
+                                        onChange={(e) => handleProductChange(index, "extraCharge", e.target.value)}
+                                        className="w-full border-2 border-gray-300 rounded-full p-4 mt-2 bg-white shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Extra Charges"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-600">Total:</label>
+                                    <input
+                                        type="number"
+                                        value={product.total}
+                                        readOnly
+                                        className="w-full border-2 border-gray-300 rounded-full p-4 mt-2 bg-gray-100 shadow-sm"
+                                    />
+                                </div>
+                                {index === products.length - 1 && (
+                                    <div className="flex items-end">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveProduct(index)}
+                                            className="bg-red-500 hover:bg-red-600 text-white py-3 px-5 rounded-full shadow-md transition-transform transform hover:scale-105"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                        <button
+                            type="button"
+                            onClick={handleAddProduct}
+                            className="bg-green-500 hover:bg-green-600 text-white py-2 px-5 rounded-full shadow-md transition-transform transform hover:scale-105"
+                        >
+                            Add Product
+                        </button>
+                    </div>
 
-                <div className="flex justify-end mt-6">
-                    <h2 className="text-xl font-semibold">Grand Total: {grandTotal.toFixed(2)}</h2>
-                </div>
+                    {/* Grand Total */}
+                    <div className="flex justify-end mt-8">
+                        <h2 className="text-2xl font-semibold text-gray-800">Grand Total: ₹{grandTotal.toFixed(2)}</h2>
+                    </div>
 
-                <div className="flex justify-end mt-6">
-                    <button type="submit" className="bg-blue-600 text-white py-2 px-4 rounded-lg">Submit Invoice</button>
-                    <button type="button" className="bg-yellow-600 text-white py-2 px-4 rounded-lg ml-4" onClick={handleUpdate}>Update Invoice</button>
-                    <button
-                        type="button"
-                        onClick={handleReset}
-                        className="ml-2 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
-                    >
-                        Reset
-                    </button>
-                </div>
-            </form>
-            {popupVisible && (
-                <Popup
-                    message={popupMessage}
-                    isSuccess={isSuccess}
-                    onClose={() => setPopupVisible(false)}
-                />
-            )}
+                    {/* Form Buttons */}
+                    <div className="flex justify-end space-x-4 mt-8">
+                        <button
+                            type="submit"
+                            className="bg-teal-500 hover:bg-teal-600 text-white py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
+                        >
+                            Submit Invoice
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleUpdate}
+                            className="bg-rose-500 hover:bg-rose-600 text-white py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
+                        >
+                            Update Invoice
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleReset}
+                            className="bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
+                        >
+                            Reset
+                        </button>
+                    </div>
+                </form>
+
+                {popupVisible && <Popup message={popupMessage} isSuccess={isSuccess} onClose={() => setPopupVisible(false)} />}
+            </div>
         </div>
+
     );
 };
 

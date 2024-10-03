@@ -151,117 +151,137 @@ const SearchPage = () => {
     }, [suggestionBoxRef]);
 
     return (
-        <div className="p-8 max-w-4xl mx-auto bg-white text-gray-900 shadow-lg rounded-lg">
-            <h2 className="text-2xl font-semibold mb-6">Search Invoices</h2>
-
-            {/* Search Input Form */}
-            <form onSubmit={handleSearch} className="mb-6 relative">
-                <div className="flex items-center space-x-4">
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={handleSearchInputChange} // Handle input changes to show suggestions
-                        placeholder="Enter customer name, mobile number, or bill number"
-                        className="flex-1 border rounded-lg p-3 bg-white"
-                    />
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                    >
-                        Search
-                    </button>
-                    <button
-                        onClick={handleHome}
-                        className="bg-purple-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    >
-                        Home
-                    </button>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-10">
+            {/* Header Section */}
+            <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 p-8 rounded-xl mb-8 shadow-md max-w-4xl mx-auto">
+                <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
+                <div className="relative z-10 text-center">
+                    <h1 className="text-4xl font-bold text-white mb-2">Search Invoices</h1>
+                    <p className="text-lg font-light text-white">Find customer invoices by Name or bill number</p>
                 </div>
+            </div>
 
-                {/* Suggestions Dropdown */}
-                {suggestions.length > 0 && (
-                    <ul ref={suggestionBoxRef} className="absolute z-10 mt-1 w-full bg-white border rounded-lg shadow-lg max-h-56 overflow-y-auto">
-                        {suggestions.map((suggestion) => (
-                            <li
-                                key={suggestion._id}
-                                onClick={() => handleSuggestionClick(suggestion)} // Handle suggestion click
-                                className="cursor-pointer px-4 py-2 hover:bg-gray-200"
-                            >
-                                {suggestion.customerId.name} - {new Date(suggestion.billDate).toLocaleDateString('en-CA')}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </form>
+            {/* Content Section */}
+            <div className="p-8 max-w-4xl mx-auto bg-white text-gray-900 shadow-lg rounded-lg">
+                <h2 className="text-2xl font-semibold mb-6 text-purple-700">Search Invoices</h2>
 
-            {/* Show loading spinner */}
-            {loading && (
-                <div className="flex justify-center items-center min-h-screen">
-                    <div className="relative flex justify-center items-center">
-                        <img src={logoImage} className="rounded-full h-28 w-28 bg-white animate-ping" alt="Loading" />
-                    </div>
-                </div>
-            )}
-
-            {/* Show error message */}
-            {error && <p className="text-red-600">{error}</p>}
-
-            {/* Search Results Table */}
-            {searchResults.length > 0 && (
-                <table className="min-w-full divide-y divide-gray-300">
-                    <thead>
-                    <tr>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Bill Number</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Date</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Customer Name</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Grand Total</th>
-                        <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                    {searchResults.map((invoice) => (
-                        <tr
-                            key={invoice._id || invoice.id}
-                            onClick={() => handleInvoiceClick(invoice._id || invoice.id)} // Handle row click
-                            className="cursor-pointer hover:bg-gray-100"
+                {/* Search Input Form */}
+                <form onSubmit={handleSearch} className="mb-6 relative">
+                    <div className="flex items-center space-x-4">
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={handleSearchInputChange}
+                            placeholder="Enter customer name, mobile number, or bill number"
+                            className="flex-1 border border-gray-300 rounded-lg p-3 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        />
+                        <button
+                            type="submit"
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 flex items-center space-x-2"
                         >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.billNumber}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{new Date(invoice.billDate).toLocaleDateString('en-GB').replace(/\//g, '-')}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.customerId?.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                {invoice.grandtotal !== undefined ? invoice.grandtotal.toFixed(2) : '0.00'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Prevent row click event
-                                        openDeletePopup(invoice._id || invoice.id); // Handle delete click
-                                    }}
-                                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-white hover:text-red-600"
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
+                            </svg>
+                            <span>Search</span>
+                        </button>
+                        <button
+                            onClick={handleHome}
+                            className="bg-gradient-to-r from-purple-500 to-indigo-400 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-600 flex items-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-2 2v7a2 2 0 01-2 2H9a2 2 0 01-2-2v-7m10 0l2 2m-2-2V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v6" />
+                            </svg>
+                            <span>Home</span>
+                        </button>
+                    </div>
+
+                    {/* Suggestions Dropdown */}
+                    {suggestions.length > 0 && (
+                        <ul ref={suggestionBoxRef} className="absolute z-10 mt-1 w-full bg-white border rounded-lg shadow-lg max-h-56 overflow-y-auto">
+                            {suggestions.map((suggestion) => (
+                                <li
+                                    key={suggestion._id}
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                    className="cursor-pointer px-4 py-2 hover:bg-gray-200"
                                 >
-                                    Delete
-                                </button>
-                            </td>
+                                    {suggestion.customerId.name} - {new Date(suggestion.billDate).toLocaleDateString('en-CA')}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </form>
+
+                {/* Show loading spinner */}
+                {loading && (
+                    <div className="flex justify-center items-center min-h-screen">
+                        <div className="relative flex justify-center items-center">
+                            <img src={logoImage} className="rounded-full h-28 w-28 bg-white animate-ping" alt="Loading" />
+                        </div>
+                    </div>
+                )}
+
+                {/* Show error message */}
+                {error && <p className="text-red-600">{error}</p>}
+
+                {/* Search Results Table */}
+                {searchResults.length > 0 && (
+                    <table className="min-w-full divide-y divide-gray-300">
+                        <thead>
+                        <tr>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Bill Number</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Date</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Customer Name</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Grand Total</th>
+                            <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">Actions</th>
                         </tr>
-                    ))}
-                    </tbody>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                        {searchResults.map((invoice) => (
+                            <tr
+                                key={invoice._id || invoice.id}
+                                onClick={() => handleInvoiceClick(invoice._id || invoice.id)}
+                                className="cursor-pointer hover:bg-gray-100"
+                            >
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.billNumber}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{new Date(invoice.billDate).toLocaleDateString('en-GB').replace(/\//g, '-')}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.customerId?.name}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.grandtotal ? invoice.grandtotal.toFixed(2) : '0.00'}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            openDeletePopup(invoice._id || invoice.id);
+                                        }}
+                                        className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center space-x-2"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        <span>Delete</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
 
-                </table>
-            )}
+                {/* Message if no search results found */}
+                {!loading && searchResults.length === 0 && searchQuery && (
+                    <p className="text-gray-700">No results found for "{searchQuery}".</p>
+                )}
 
-            {/* Message if no search results found */}
-            {!loading && searchResults.length === 0 && searchQuery && (
-                <p className="text-gray-700">No results found for "{searchQuery}".</p>
-            )}
-
-            {/* Confirmation Popup */}
-            <ConfirmationPopup
-                isOpen={showDeletePopup}
-                onClose={closeDeletePopup}
-                onConfirm={handleDelete}
-                message="Are you sure you want to delete this invoice?"
-            />
+                {/* Confirmation Popup */}
+                <ConfirmationPopup
+                    isOpen={showDeletePopup}
+                    onClose={closeDeletePopup}
+                    onConfirm={handleDelete}
+                    message="Are you sure you want to delete this invoice?"
+                />
+            </div>
         </div>
+
+
     );
 };
 

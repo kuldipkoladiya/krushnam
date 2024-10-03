@@ -187,127 +187,153 @@ const AccountsPage = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md">
-            <h1 className="text-3xl font-bold text-gray-700 mb-6">Customer Accounts</h1>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {/* Customer Name Input */}
-                <div className="bg-gray-100 p-4 rounded-lg border border-gray-300 relative">
-                    <label className="block text-sm font-medium text-gray-600">Customer Name:</label>
-                    <input
-                        type="text"
-                        value={customerName}
-                        onChange={handleCustomerNameChange}
-                        onKeyDown={handleKeyDown}
-                        className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400"
-                        placeholder="Enter customer name"
-                    />
-                    {showSuggestions && customerSuggestions.length > 0 && (
-                        <ul ref={suggestionBoxRef} className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-md max-h-48 overflow-y-auto z-10">
-                            {customerSuggestions.map((customer, index) => (
-                                <li
-                                    key={customer.id}
-                                    className={`p-2 cursor-pointer hover:bg-gray-200 ${index === selectedSuggestionIndex ? 'bg-gray-200' : ''}`}
-                                    onClick={() => handleSuggestionClick(customer)}
-                                >
-                                    {customer.name}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-10">
+            {/* Header Section */}
+            <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 p-8 rounded-xl mb-8 shadow-md max-w-7xl mx-auto">
+                <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
+                <div className="relative z-10 text-center">
+                    <h1 className="text-4xl font-bold text-white mb-2">Customer Accounts</h1>
+                    <p className="text-lg font-light text-white">Manage customer accounts, transactions, and payments</p>
                 </div>
-
-                {/* Received Amount Input */}
-                <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
-                    <label className="block text-sm font-medium text-gray-600">Received Amount:</label>
-                    <input
-                        type="number"
-                        value={receivedAmount}
-                        onChange={(e) => setReceivedAmount(e.target.value)}
-                        className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400"
-                        placeholder="Enter amount"
-                    />
-                </div>
-
-                {/* Transaction Date Input */}
-                <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
-                    <label className="block text-sm font-medium text-gray-600">Transaction Date:</label>
-                    <input
-                        type="date"
-                        value={transactionDate}
-                        onChange={(e) => setTransactionDate(e.target.value)}
-                        className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400"
-                    />
-                </div>
-
-                {/* Payment Type Input */}
-                <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
-                    <label className="block text-sm font-medium text-gray-600">Payment Type:</label>
-                    <select
-                        value={paymentType}
-                        onChange={(e) => setPaymentType(e.target.value)}
-                        className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400"
-                    >
-                        <option value="cash">Cash</option>
-                        <option value="bank">Bank</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                {/* Submit Button */}
-                <div className="md:col-span-2 text-center space-x-2">
-                    <button type="submit" className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition">
-                        Save Account
-                    </button>
-                    <button
-                        onClick={handleHome}
-                        className="bg-purple-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    >
-                        Home
-                    </button>
-                    <button
-                        onClick={handlePrint}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                    >
-                        Print Invoice
-                    </button>
-                    <button onClick={handleDownload} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Download as PDF</button>
-                </div>
-            </form>
-            <div id="printable-area" className="bg-white  rounded-lg p-4 shadow-sm space-y-4">
-            {/* Display Transaction Details */}
-            {transactionDetails && (
-                <div className="mt-8 p-6 rounded-lg border border-gray-300 shadow-lg bg-white">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6">Transaction </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Customer Information */}
-                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 shadow-sm">
-                            <h3 className="text-lg font-semibold text-blue-800 mb-2">Customer Information</h3>
-                            <p className="text-gray-700"><strong>Name:</strong> {transactionDetails.customerId?.name || 'N/A'}</p>
-                            <p className="text-gray-700"><strong>Mobile Number:</strong> {transactionDetails.customerId?.mobileNumber || 'N/A'}</p>
-                        </div>
-
-                        {/* Account Information */}
-                        <div className="bg-green-50 p-4 rounded-lg border border-green-200 shadow-sm">
-                            <h3 className="text-lg font-semibold text-green-800 mb-2">Account Information</h3>
-                            <p className="text-gray-700"><strong>Total Payable:</strong> {transactionDetails.customerAccountId?.totalPayable?.toFixed(2) || 'N/A'}</p>
-                            <p className="text-gray-700"><strong>Total Amount Received:</strong> {transactionDetails.customerAccountId?.totalAmountRecevied?.toFixed(2) || 'N/A'}</p>
-                            <p className="text-gray-700 font-bold"><strong>Pending Amount:</strong> {((transactionDetails.customerAccountId?.totalPayable || 0) - (transactionDetails.customerAccountId?.totalAmountRecevied || 0) )}</p>
-                        </div>
-
-                        {/* Transaction Details */}
-                        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm md:col-span-2">
-                            <h3 className="text-lg font-semibold text-yellow-800 mb-2">Transaction Details</h3>
-                            <p className="text-gray-700"><strong>Date:</strong> {new Date(transactionDetails.Date).toLocaleDateString() || 'N/A'}</p>
-                            <p className="text-gray-700"><strong>Payment Type:</strong> {transactionDetails.notes || 'N/A'}</p>
-                            <p className="text-gray-700 font-bold"><strong>Amount:</strong> {transactionDetails.amount?.toFixed(2) || 'N/A'}</p>
-
-                        </div>
-                    </div>
-                </div>
-            )}
             </div>
 
+            {/* Form and Transaction Section */}
+            <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    {/* Customer Name Input */}
+                    <div className="bg-gray-100 p-4 rounded-lg border border-gray-300 relative">
+                        <label className="block text-sm font-medium text-gray-600">Customer Name:</label>
+                        <input
+                            type="text"
+                            value={customerName}
+                            onChange={handleCustomerNameChange}
+                            onKeyDown={handleKeyDown}
+                            className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400"
+                            placeholder="Enter customer name"
+                        />
+                        {showSuggestions && customerSuggestions.length > 0 && (
+                            <ul ref={suggestionBoxRef} className="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-md max-h-48 overflow-y-auto z-10">
+                                {customerSuggestions.map((customer, index) => (
+                                    <li
+                                        key={customer.id}
+                                        className={`p-2 cursor-pointer hover:bg-gray-200 ${index === selectedSuggestionIndex ? 'bg-gray-200' : ''}`}
+                                        onClick={() => handleSuggestionClick(customer)}
+                                    >
+                                        {customer.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
 
+                    {/* Received Amount Input */}
+                    <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
+                        <label className="block text-sm font-medium text-gray-600">Received Amount:</label>
+                        <input
+                            type="number"
+                            value={receivedAmount}
+                            onChange={(e) => setReceivedAmount(e.target.value)}
+                            className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400"
+                            placeholder="Enter amount"
+                        />
+                    </div>
+
+                    {/* Transaction Date Input */}
+                    <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
+                        <label className="block text-sm font-medium text-gray-600">Transaction Date:</label>
+                        <input
+                            type="date"
+                            value={transactionDate}
+                            onChange={(e) => setTransactionDate(e.target.value)}
+                            className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400"
+                        />
+                    </div>
+
+                    {/* Payment Type Input */}
+                    <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
+                        <label className="block text-sm font-medium text-gray-600">Payment Type:</label>
+                        <select
+                            value={paymentType}
+                            onChange={(e) => setPaymentType(e.target.value)}
+                            className="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-400"
+                        >
+                            <option value="cash">Cash</option>
+                            <option value="bank">Bank</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="md:col-span-2 flex justify-center space-x-4">
+                        <button type="submit" className="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>Save Account</span>
+                        </button>
+                        <button
+                            onClick={handleHome}
+                            className="bg-purple-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-2 2v7a2 2 0 01-2 2H9a2 2 0 01-2-2v-7m10 0l2 2m-2-2V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v6" />
+                            </svg>
+                            <span>Home</span>
+                        </button>
+                        <button
+                            onClick={handlePrint}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 10h14M5 6h14M5 14h14M5 18h14M5 6v12" />
+                            </svg>
+                            <span>Print Invoice</span>
+                        </button>
+                        <button
+                            onClick={handleDownload}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>Download as PDF</span>
+                        </button>
+                    </div>
+                </form>
+
+                {/* Display Transaction Details */}
+                <div id="printable-area" className="bg-white rounded-lg p-4 shadow-sm space-y-4 mt-8">
+                    {transactionDetails && (
+                        <div className="p-6 rounded-lg border border-gray-300 shadow-lg bg-white">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-6">Transaction Details</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Customer Information */}
+                                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 shadow-sm">
+                                    <h3 className="text-lg font-semibold text-blue-800 mb-2">Customer Information</h3>
+                                    <p className="text-gray-700"><strong>Name:</strong> {transactionDetails.customerId?.name || 'N/A'}</p>
+                                    <p className="text-gray-700"><strong>Mobile Number:</strong> {transactionDetails.customerId?.mobileNumber || 'N/A'}</p>
+                                </div>
+
+                                {/* Account Information */}
+                                <div className="bg-green-50 p-4 rounded-lg border border-green-200 shadow-sm">
+                                    <h3 className="text-lg font-semibold text-green-800 mb-2">Account Information</h3>
+                                    <p className="text-gray-700"><strong>Total Payable:</strong> {transactionDetails.customerAccountId?.totalPayable?.toFixed(2) || 'N/A'}</p>
+                                    <p className="text-gray-700"><strong>Total Amount Received:</strong> {transactionDetails.customerAccountId?.totalAmountRecevied?.toFixed(2) || 'N/A'}</p>
+                                    <p className="text-gray-700 font-bold"><strong>Pending Amount:</strong> {(transactionDetails.customerAccountId?.totalPayable || 0) - (transactionDetails.customerAccountId?.totalAmountRecevied || 0)}</p>
+                                </div>
+
+                                {/* Transaction Details */}
+                                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm md:col-span-2">
+                                    <h3 className="text-lg font-semibold text-yellow-800 mb-2">Transaction Details</h3>
+                                    <p className="text-gray-700"><strong>Date:</strong> {new Date(transactionDetails.Date).toLocaleDateString() || 'N/A'}</p>
+                                    <p className="text-gray-700"><strong>Payment Type:</strong> {transactionDetails.notes || 'N/A'}</p>
+                                    <p className="text-gray-700 font-bold"><strong>Amount:</strong> {transactionDetails.amount?.toFixed(2) || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

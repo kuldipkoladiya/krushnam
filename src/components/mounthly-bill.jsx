@@ -269,186 +269,215 @@ const MonthlyBillPage = () => {
     // Generate and download PDF
 
     return (
-        <div className="p-8 max-w-7xl mx-auto bg-white text-gray-900 shadow-lg rounded-lg">
-            <h2 className="text-2xl font-semibold mb-6">Monthly Bill Page</h2>
-
-            {/* Search Input Form */}
-            <form onSubmit={handleSearch} className="mb-6 relative">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <input
-                        type="text"
-                        value={customerName}
-                        onChange={handleCustomerNameChange}
-                        placeholder="Enter customer name"
-                        className="border rounded-lg p-3 bg-white"
-                    />
-
-                    {suggestions.length > 0 && (
-                        <ul ref={suggestionBoxRef} className="absolute z-10 mt-10 w-96 bg-white border rounded-lg shadow-lg max-h-56 overflow-y-auto">
-                            {suggestions.map((suggestion) => (
-                                <li
-                                    key={suggestion.id}
-                                    onClick={() => handleSuggestionClick(suggestion)}
-                                    className="cursor-pointer px-4 py-2 hover:bg-gray-200"
-                                >
-                                    {suggestion.name}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-
-                    <input
-                        type="date"
-                        value={fromDate}
-                        onChange={(e) => setFromDate(e.target.value)}
-                        placeholder="From Date"
-                        className="border rounded-lg p-3 bg-white"
-                    />
-
-                    <input
-                        type="date"
-                        value={toDate}
-                        onChange={(e) => setToDate(e.target.value)}
-                        placeholder="To Date"
-                        className="border rounded-lg p-3 bg-white"
-                    />
-
-
-                    <button
-                        onClick={handleHome}
-                        className="bg-purple-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    >
-                        Home
-                    </button>
-                    <button
-                        onClick={handlePrint}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                    >
-                        Print Invoice
-                    </button>
-                    <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                    >
-                        Search
-                    </button>
-                    <button onClick={handleDownload} className="bg-blue-500 text-white px-3 py-2 rounded-lg w-1/2">Download as PDF</button>
-                </div>
-            </form>
-
-            {/* Error Handling */}
-            {error && <div className="text-red-500 mb-4">{error}</div>}
-
-            {/* Loading Indicator */}
-            {loading && <div className="text-blue-500">Loading...</div>}
-            <div id="printable-area" className="bg-white border rounded-lg p-4 shadow-sm space-y-4 grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                {/* Left Side - Bill List */}
-                <div className="space-y-4">
-
-                    {searchResults.length > 0 && (
-                        <div className="bg-white border rounded-lg p-4 ">
-                            <table id="invoice-table" className="min-w-full divide-y divide-gray-300">
-                                <thead>
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Bill Number</th>
-                                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
-                                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Customer Name</th>
-                                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Grand Total</th>
-                                </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                {searchResults.map((invoice) => (
-                                    <tr key={invoice.id} className="cursor-pointer" onClick={() => handleInvoiceClick(invoice.id)}>
-                                        <td className="px-6 py-4 whitespace-nowrap">{invoice.billNumber}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            {new Date(invoice.billDate).toLocaleDateString('en-GB').replace(/\//g, '-')}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{invoice.customerId ? invoice.customerId.name : 'Unknown'}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{invoice.grandtotal ? invoice.grandtotal.toFixed(2) : '0.00'}</td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-
-                {/* Right Side - Input for Sheet1 and Sheet2 */}
-                {/* Display Total of All Bills */}
-
-                <div className="space-y-4">
-                    {searchResults.length > 0 && (
-                        <div className="text-lg font-semibold ">
-                            Total Bills: {totalOfAllBills.toFixed(2)}
-                        </div>
-                    )}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Additional Sheets</h3>
-
-                        <span className="font-semibold">fyusing : </span>
-                        <input
-                            type="number"
-                            value={sheet1}
-                            onChange={(e) => setSheet1(e.target.value)}
-                            placeholder="Enter fyusing Amount"
-                            className="border rounded-lg p-2 bg-white"
-                        />
-
-                        <div>
-                            <span className="font-semibold ml-3">sheet : </span>
-                            <input
-                                type="number"
-                                value={sheet2}
-                                onChange={(e) => setSheet2(e.target.value)}
-                                placeholder="Enter Sheet 2 Amount"
-                                className="border rounded-lg p-2 bg-white"
-                            />
-                        </div>
-
-                        {/* Add Date Field */}
-                        <div className="mt-4">
-                            <span className="font-semibold">Date : </span>
-                            <input
-                                type="date"
-                                value={sheetDate}
-                                onChange={(e) => setSheetDate(e.target.value)} // Handle date input change
-                                className="border rounded-lg p-3 bg-white"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            {!isSaved && (
-                                <button
-                                    onClick={saveSheetData}
-                                    onKeyDown={handleKeyDown}
-                                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-                                >
-                                    Save Sheets
-                                </button>
-                            )}
-
-                            {isSaved && extraId && (
-                                <>
-                                    <div className="text-green-600 font-bold mb-2">Sheets saved successfully!</div>
-                                    <button
-                                        onClick={updateSheetData}
-                                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
-                                    >
-                                        Update Sheets
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                    <div className="text-2xl font-semibold mt-4">
-                        Grand Total: {grandTotalWithSheets.toFixed(2)}
-                    </div>
-                    <div className="text-3xl font-bold mt-4">
-                     Total Pending Amount: {pendingAmount.toFixed(2)}
-                    </div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-10">
+            {/* Header Section (Payable Page Style) */}
+            <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 p-8 rounded-xl mb-8 shadow-md max-w-7xl mx-auto">
+                <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
+                <div className="relative z-10 text-center">
+                    <h1 className="text-4xl font-bold text-white mb-2">Monthly Bill Page</h1>
+                    <p className="text-lg font-light text-white">Manage monthly customer bills and transactions</p>
                 </div>
             </div>
+
+            {/* Content Section */}
+            <div className="p-8 max-w-7xl mx-auto bg-white text-gray-900 shadow-lg rounded-lg">
+                {/* Search Input Form */}
+                <form onSubmit={handleSearch} className="mb-6 relative">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <input
+                            type="text"
+                            value={customerName}
+                            onChange={handleCustomerNameChange}
+                            placeholder="Enter customer name"
+                            className="border rounded-lg p-3 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        />
+
+                        {suggestions.length > 0 && (
+                            <ul ref={suggestionBoxRef} className="absolute z-10 mt-10 w-96 bg-white border rounded-lg shadow-lg max-h-56 overflow-y-auto">
+                                {suggestions.map((suggestion) => (
+                                    <li
+                                        key={suggestion.id}
+                                        onClick={() => handleSuggestionClick(suggestion)}
+                                        className="cursor-pointer px-4 py-2 hover:bg-gray-200"
+                                    >
+                                        {suggestion.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+
+                        <input
+                            type="date"
+                            value={fromDate}
+                            onChange={(e) => setFromDate(e.target.value)}
+                            placeholder="From Date"
+                            className="border rounded-lg p-3 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        />
+
+                        <input
+                            type="date"
+                            value={toDate}
+                            onChange={(e) => setToDate(e.target.value)}
+                            placeholder="To Date"
+                            className="border rounded-lg p-3 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        />
+
+                        <button
+                            onClick={handleHome}
+                            className="bg-gradient-to-r from-purple-500 to-indigo-400 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 flex items-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-2 2v7a2 2 0 01-2 2H9a2 2 0 01-2-2v-7m10 0l2 2m-2-2V5a2 2 0 00-2-2h-2a2 2 0 00-2 2v6" />
+                            </svg>
+                            <span>Home</span>
+                        </button>
+
+                        <button
+                            onClick={handlePrint}
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 flex items-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 10h14M5 6h14M5 14h14M5 18h14M5 6v12" />
+                            </svg>
+                            <span>Print Invoice</span>
+                        </button>
+
+                        <button
+                            type="submit"
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 flex items-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>Search</span>
+                        </button>
+
+                        <button
+                            onClick={handleDownload}
+                            className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 flex items-center space-x-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span>Download as PDF</span>
+                        </button>
+                    </div>
+                </form>
+
+                {/* Error Handling */}
+                {error && <div className="text-red-500 mb-4">{error}</div>}
+
+                {/* Loading Indicator */}
+                {loading && <div className="text-blue-500">Loading...</div>}
+
+                <div id="printable-area" className="bg-white border rounded-lg p-4 shadow-sm space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                        {/* Left Side - Bill List */}
+                        <div className="space-y-4">
+                            {searchResults.length > 0 && (
+                                <div className="bg-white border rounded-lg p-4 shadow-sm">
+                                    <table id="invoice-table" className="min-w-full divide-y divide-gray-300">
+                                        <thead>
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Bill Number</th>
+                                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
+                                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Customer Name</th>
+                                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Grand Total</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                        {searchResults.map((invoice) => (
+                                            <tr key={invoice.id} className="cursor-pointer hover:bg-gray-100" onClick={() => handleInvoiceClick(invoice.id)}>
+                                                <td className="px-6 py-4 whitespace-nowrap">{invoice.billNumber}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">{new Date(invoice.billDate).toLocaleDateString('en-GB')}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">{invoice.customerId ? invoice.customerId.name : 'Unknown'}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap">{invoice.grandtotal ? invoice.grandtotal.toFixed(2) : '0.00'}</td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Right Side - Input for Sheet1 and Sheet2 */}
+                        <div className="space-y-4">
+                            {searchResults.length > 0 && (
+                                <div className="text-lg font-semibold">
+                                    Total Bills: {totalOfAllBills.toFixed(2)}
+                                </div>
+                            )}
+                            <div>
+                                <h3 className="text-lg font-semibold mb-2">Additional Sheets</h3>
+
+                                <div className="mb-4">
+                                    <span className="font-semibold">FYUSING: </span>
+                                    <input
+                                        type="number"
+                                        value={sheet1}
+                                        onChange={(e) => setSheet1(e.target.value)}
+                                        placeholder="Enter fyusing Amount"
+                                        className="border rounded-lg p-2 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <span className="font-semibold">Sheet: </span>
+                                    <input
+                                        type="number"
+                                        value={sheet2}
+                                        onChange={(e) => setSheet2(e.target.value)}
+                                        placeholder="Enter Sheet 2 Amount"
+                                        className="border rounded-lg p-2 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                    />
+                                </div>
+
+                                {/* Add Date Field */}
+                                <div className="mb-4">
+                                    <span className="font-semibold">Date: </span>
+                                    <input
+                                        type="date"
+                                        value={sheetDate}
+                                        onChange={(e) => setSheetDate(e.target.value)}
+                                        className="border rounded-lg p-3 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                                    />
+                                </div>
+
+                                <div className="mt-4">
+                                    {!isSaved && (
+                                        <button
+                                            onClick={saveSheetData}
+                                            onKeyDown={handleKeyDown}
+                                            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                                        >
+                                            Save Sheets
+                                        </button>
+                                    )}
+
+                                    {isSaved && extraId && (
+                                        <>
+                                            <div className="text-green-600 font-bold mb-2">Sheets saved successfully!</div>
+                                            <button
+                                                onClick={updateSheetData}
+                                                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                                            >
+                                                Update Sheets
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="text-2xl font-semibold mt-4">
+                                Grand Total: {grandTotalWithSheets.toFixed(2)}
+                            </div>
+                            <div className="text-3xl font-bold mt-4">
+                                Total Pending Amount: {pendingAmount.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

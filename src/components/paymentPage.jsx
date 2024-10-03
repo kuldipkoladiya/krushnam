@@ -144,122 +144,139 @@ const PaymentPage = () => {
     };
 
     return (
-        <div className="p-8 max-w-5xl mx-auto bg-gray-50 rounded-lg shadow-lg">
-            <h1 className="text-5xl font-bold text-purple-700 mb-8 text-center">Payment History</h1>
-            <div className="space-y-8">
-                {/* Search Transactions */}
-                <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200">
-                    <h2 className="text-2xl font-semibold mb-6">Search Transactions</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {/* Customer Name Input */}
-                        <div className="relative">
-                            <label className="block text-sm font-medium text-gray-700">Customer Name</label>
-                            <input
-                                type="text"
-                                value={customerName}
-                                onChange={handleCustomerNameChange}
-                                onKeyDown={handleKeyDown}
-                                className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-400"
-                                placeholder="Enter customer name"
-                            />
-                            {showSuggestions && customerSuggestions.length > 0 && (
-                                <ul
-                                    className="absolute bg-white border border-gray-300 mt-1 w-full max-h-48 overflow-y-auto z-10 shadow-md rounded-lg"
-                                    ref={suggestionBoxRef}
-                                >
-                                    {customerSuggestions.map((customer, index) => (
-                                        <li
-                                            key={customer.id}
-                                            className={`p-2 cursor-pointer hover:bg-gray-200 ${
-                                                selectedSuggestionIndex === index ? 'bg-gray-200' : ''
-                                            }`}
-                                            onClick={() => handleSuggestionClick(customer)}
-                                        >
-                                            {customer.name}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-10">
+            <div className="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
 
-                        {/* Date Inputs */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">From Date</label>
-                            <input
-                                type="date"
-                                value={fromDate}
-                                onChange={(e) => setFromDate(e.target.value)}
-                                className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-400"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">To Date</label>
-                            <input
-                                type="date"
-                                value={toDate}
-                                onChange={(e) => setToDate(e.target.value)}
-                                className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-400"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Fetch Transactions Button */}
-                    <div className="mt-6 flex space-x-3">
-                        <button
-                            type="button"
-                            onClick={handleFetchTransactions}
-                            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400"
-                        >
-                            Get Transactions
-                        </button>
-                        <button
-                            onClick={handleHome}
-                            className="bg-purple-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        >
-                            Home
-                        </button>
-                        <button
-                            onClick={handlePrint}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                        >
-                            Print Invoice
-                        </button>
-                        <button onClick={handleDownload} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Download as PDF</button>
+                {/* Header Section */}
+                <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 p-8 rounded-xl mb-8 shadow-md">
+                    <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
+                    <div className="relative z-10 text-center">
+                        <h1 className="text-4xl font-bold text-white mb-2">Payment History</h1>
+                        <p className="text-lg font-light text-white">View and manage all transaction history</p>
                     </div>
                 </div>
-                <div id="printable-area" className="bg-white border rounded-lg p-4 shadow-sm space-y-4">
-                {/* Transaction History */}
-                {transactions.length > 0 && (
+
+                <div className="space-y-8">
+                    {/* Search Transactions */}
                     <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200">
-                        <h2 className="text-2xl font-semibold mb-6">Transaction History</h2>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200 table-auto">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
-                                </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                {transactions.map((transaction, index) => (
-                                    <tr key={index}>
-                                        <td className="px-6 py-4 whitespace-nowrap">{transaction.customerId?.name || 'N/A'}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            {new Date(transaction.Date).toLocaleDateString() || 'N/A'}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{transaction.amount.toLocaleString()}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap">{transaction.notes || 'No notes'}</td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
+                        <h2 className="text-2xl font-semibold mb-6">Search Transactions</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Customer Name Input */}
+                            <div className="relative">
+                                <label className="block text-sm font-medium text-gray-700">Customer Name</label>
+                                <input
+                                    type="text"
+                                    value={customerName}
+                                    onChange={handleCustomerNameChange}
+                                    onKeyDown={handleKeyDown}
+                                    className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-400"
+                                    placeholder="Enter customer name"
+                                />
+                                {showSuggestions && customerSuggestions.length > 0 && (
+                                    <ul
+                                        className="absolute bg-white border border-gray-300 mt-1 w-full max-h-48 overflow-y-auto z-10 shadow-md rounded-lg"
+                                        ref={suggestionBoxRef}
+                                    >
+                                        {customerSuggestions.map((customer, index) => (
+                                            <li
+                                                key={customer.id}
+                                                className={`p-2 cursor-pointer hover:bg-gray-200 ${
+                                                    selectedSuggestionIndex === index ? 'bg-gray-200' : ''
+                                                }`}
+                                                onClick={() => handleSuggestionClick(customer)}
+                                            >
+                                                {customer.name}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+
+                            {/* Date Inputs */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">From Date</label>
+                                <input
+                                    type="date"
+                                    value={fromDate}
+                                    onChange={(e) => setFromDate(e.target.value)}
+                                    className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-400"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">To Date</label>
+                                <input
+                                    type="date"
+                                    value={toDate}
+                                    onChange={(e) => setToDate(e.target.value)}
+                                    className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-400"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Fetch Transactions Button */}
+                        <div className="mt-6 flex space-x-3">
+                            <button
+                                type="button"
+                                onClick={handleFetchTransactions}
+                                className="bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-700 hover:to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            >
+                                Get Transactions
+                            </button>
+                            <button
+                                onClick={handleHome}
+                                className="bg-gradient-to-r from-purple-500 to-indigo-400 hover:from-purple-600 hover:to-indigo-500 text-white py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            >
+                                Home
+                            </button>
+                            <button
+                                onClick={handlePrint}
+                                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                            >
+                                Print Invoice
+                            </button>
+                            <button
+                                onClick={handleDownload}
+                                className="bg-gradient-to-r from-blue-500 to-indigo-400 text-white px-4 py-2 rounded-lg"
+                            >
+                                Download as PDF
+                            </button>
                         </div>
                     </div>
-                )}
-            </div> </div>
+
+                    {/* Transaction History */}
+                    {transactions.length > 0 && (
+                        <div id="printable-area" className="bg-white border rounded-lg p-8 shadow-sm space-y-4">
+                            <h2 className="text-2xl font-semibold mb-6">Transaction History</h2>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200 table-auto">
+                                    <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                    {transactions.map((transaction, index) => (
+                                        <tr key={index}>
+                                            <td className="px-6 py-4 whitespace-nowrap">{transaction.customerId?.name || 'N/A'}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {new Date(transaction.Date).toLocaleDateString() || 'N/A'}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{transaction.amount.toLocaleString()}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{transaction.notes || 'No notes'}</td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
+
     );
 };
 
