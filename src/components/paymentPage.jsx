@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {jsPDF} from "jspdf";
-import {useNavigate} from "react-router-dom";
+import { jsPDF } from "jspdf";
+import { useNavigate } from "react-router-dom";
+import ConfirmationPopup from './ConfirmationPopup'; // Assuming you have a ConfirmationPopup component
 
 const PaymentPage = () => {
     const [customerName, setCustomerName] = useState('');
@@ -12,13 +13,15 @@ const PaymentPage = () => {
     const [transactions, setTransactions] = useState([]);
     const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [transactionToDelete, setTransactionToDelete] = useState(null); // To hold the transaction ID to delete
+    const [showDeletePopup, setShowDeletePopup] = useState(false); // For controlling the delete popup
     const suggestionBoxRef = useRef(null);
     const navigate = useNavigate();
+
+    // PDF and Print handlers remain the same
     const handleDownload = () => {
         const pdf = new jsPDF('p', 'mm', 'a4');
-
-        // Set the scaling factor to 0.3 or 0.2 for more scaling
-        const scalingFactor = 0.2; // You can experiment with this value
+        const scalingFactor = 0.2;
         const margins = { top: 10, left: 10 };
 
         pdf.html(document.getElementById('printable-area'), {
@@ -36,15 +39,14 @@ const PaymentPage = () => {
     };
 
     const handlePrint = () => {
-        const printContents = document.getElementById('printable-area').innerHTML; // Get the specific div HTML
-        const originalContents = document.body.innerHTML; // Store original HTML
+        const printContents = document.getElementById('printable-area').innerHTML;
+        const originalContents = document.body.innerHTML;
 
-        document.body.innerHTML = printContents; // Replace body HTML with the specific div
-        window.print(); // Trigger the print dialog
-        document.body.innerHTML = originalContents; // Restore original HTML after printing
-        window.location.reload(); // Reload the page to restore component state
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+        window.location.reload();
     };
-
 
     // Fetch customers initially
     useEffect(() => {
@@ -139,6 +141,39 @@ const PaymentPage = () => {
             alert('Error fetching transactions. Please try again.');
         }
     };
+
+    // Delete functionality: Open confirmation popup
+    const openDeletePopup = (transactionId) => {
+        setTransactionToDelete(transactionId);
+        setShowDeletePopup(true);
+    };
+
+    // Confirm and delete transaction
+    const handleDelete = async () => {
+        if (transactionToDelete) {
+            try {
+                const response = await fetch(`https://shreeji-be.vercel.app/v1/user/customerTransaction/${transactionToDelete}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) throw new Error('Failed to delete transaction');
+
+                // Refresh transaction list after delete
+                await handleFetchTransactions();
+                setTransactionToDelete(null);
+                setShowDeletePopup(false);
+            } catch (error) {
+                console.error('Error deleting transaction:', error);
+                alert('Error deleting transaction. Please try again.');
+            }
+        }
+    };
+
+    // Close delete popup
+    const closeDeletePopup = () => {
+        setShowDeletePopup(false);
+        setTransactionToDelete(null);
+    };
+
     const handleHome = () => {
         navigate('/');
     };
@@ -146,7 +181,6 @@ const PaymentPage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-10">
             <div className="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
-
                 {/* Header Section */}
                 <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 p-8 rounded-xl mb-8 shadow-md">
                     <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
@@ -180,9 +214,7 @@ const PaymentPage = () => {
                                         {customerSuggestions.map((customer, index) => (
                                             <li
                                                 key={customer.id}
-                                                className={`p-2 cursor-pointer hover:bg-gray-200 ${
-                                                    selectedSuggestionIndex === index ? 'bg-gray-200' : ''
-                                                }`}
+                                                className={`p-2 cursor-pointer hover:bg-gray-200 ${selectedSuggestionIndex === index ? 'bg-gray-200' : ''}`}
                                                 onClick={() => handleSuggestionClick(customer)}
                                             >
                                                 {customer.name}
@@ -255,6 +287,7 @@ const PaymentPage = () => {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
@@ -266,6 +299,17 @@ const PaymentPage = () => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">{transaction.amount.toLocaleString()}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">{transaction.notes || 'No notes'}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <button
+                                                    onClick={() => openDeletePopup(transaction._id || transaction.id)}
+                                                    className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center space-x-2"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                    <span>Delete</span>
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))}
                                     </tbody>
@@ -274,9 +318,16 @@ const PaymentPage = () => {
                         </div>
                     )}
                 </div>
+
+                {/* Confirmation Popup */}
+                <ConfirmationPopup
+                    isOpen={showDeletePopup}
+                    onClose={closeDeletePopup}
+                    onConfirm={handleDelete}
+                    message="Are you sure you want to delete this transaction?"
+                />
             </div>
         </div>
-
     );
 };
 

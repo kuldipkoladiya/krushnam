@@ -154,6 +154,7 @@ const PayablePage = () => {
                 <th className="px-6 py-4 text-left text-md font-medium">Mobile Number</th>
                 <th className="px-6 py-4 text-left text-md font-medium">Total Payable</th>
                 <th className="px-6 py-4 text-left text-md font-medium">Total Amount Received</th>
+                <th className="px-6 py-4 text-left text-md font-medium">Pending Amount</th> {/* New Column */}
               </tr>
               </thead>
               <tbody>
@@ -167,11 +168,12 @@ const PayablePage = () => {
                         <td className="px-6 py-4">{account.customerId.mobileNumber}</td>
                         <td className="px-6 py-4">{account.totalPayable}</td>
                         <td className="px-6 py-4">{account.totalAmountRecevied}</td>
+                        <td className="px-6 py-4">{account.totalPayable - account.totalAmountRecevied}</td> {/* Pending Amount Calculation */}
                       </tr>
                   ))
               ) : (
                   <tr>
-                    <td colSpan="4" className="text-center px-6 py-4 text-md font-medium text-gray-600">
+                    <td colSpan="5" className="text-center px-6 py-4 text-md font-medium text-gray-600">
                       No accounts found.
                     </td>
                   </tr>
