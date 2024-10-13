@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const PayablePage = () => {
   const [searchQuery, setSearchQuery] = useState(''); // For holding the search input value
@@ -9,6 +11,7 @@ const PayablePage = () => {
   const [error, setError] = useState(''); // For error handling
 
   const navigate = useNavigate(); // Initialize navigate function
+  const tableRef = useRef(); // To reference the table for printing
 
   // Fetch all customer accounts to display in the table
   const fetchAllAccounts = async () => {
@@ -63,6 +66,26 @@ const PayablePage = () => {
     navigate('/'); // Navigates to the home page ("/")
   };
 
+  // Download PDF functionality
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Customer Accounts', 14, 10);
+    doc.autoTable({
+      head: [['Customer Name', 'Mobile Number', 'Pending Amount']],
+      body: filteredAccounts.map((account) => [
+        account.customerId.name,
+        account.customerId.mobileNumber,
+        Math.round(account.totalPayable - account.totalAmountRecevied)
+      ])
+    });
+    doc.save('customer-accounts.pdf');
+  };
+
+  // Print functionality (only prints the table data)
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
       <div className="p-8 bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center relative">
         <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl relative">
@@ -91,29 +114,21 @@ const PayablePage = () => {
 
           {/* Compact Header Section */}
           <div className="relative bg-gradient-to-r from-indigo-500 to-purple-500 p-6 rounded-xl mb-6 shadow-md">
-            {/* Background pattern */}
             <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
-
-            {/* Header content */}
             <div className="relative z-10 text-center">
               <div className="flex justify-center mb-4">
-                {/* Icon added to header */}
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m2 9H7a2 2 0 01-2-2V7a2 2 0 012-2h3.28a1 1 0 00.8-.4l1.92-2.56A1 1 0 0114.72 2H17a2 2 0 012 2v2a2 2 0 01-2 2h-1M9 12h6m2 9H7a2 2 0 01-2-2V7a2 2 0 012-2h3.28a1 1 0 00.8-.4l1.92-2.56A1 1 0 0114.72 2H17a2 2 0 012 2v2a2 2 0 01-2 2h-1" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m2 9H7a2 2 0 01-2-2V7a2 2 0 012-2h3.28a1 1 0 00.8-.4l1.92-2.56A1 1 0 0114.72 2H17a2 2 0 012 2v2a2 2 0 01-2 2h-1" />
                 </svg>
               </div>
               <h1 className="text-3xl font-bold text-white mb-1">Customer Billing Dashboard</h1>
-              <p className="text-base text-white font-light">
-                Manage customer accounts, billing details, and payments effectively.
-              </p>
+              <p className="text-base text-white font-light">Manage customer accounts, billing details, and payments effectively.</p>
             </div>
           </div>
 
           {/* Search Box with Button */}
           <div className="mb-8">
-            <label className="block text-lg text-gray-800 font-semibold mb-2 text-center" htmlFor="customerSearch">
-              Search Customer
-            </label>
+            <label className="block text-lg text-gray-800 font-semibold mb-2 text-center" htmlFor="customerSearch">Search Customer</label>
             <div className="flex items-center justify-center">
               <input
                   type="text"
@@ -127,55 +142,51 @@ const PayablePage = () => {
                   onClick={handleSearchClick}
                   className="ml-3 bg-indigo-600 text-white p-3 rounded-full shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all"
               >
-                <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
-                  ></path>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"></path>
                 </svg>
               </button>
             </div>
           </div>
 
-          {/* All Customer Accounts Table */}
-          <div className="overflow-auto rounded-lg shadow-md">
-            <table className="min-w-full bg-white table-auto rounded-lg">
+          {/* Download PDF and Print Buttons */}
+          <div className="mb-8 flex justify-end space-x-4">
+            <button
+                onClick={handleDownloadPDF}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-indigo-600"
+            >
+              Download PDF
+            </button>
+            <button
+                onClick={handlePrint}
+                className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-green-600"
+            >
+              Print
+            </button>
+          </div>
+
+          {/* All Customer Accounts Table (Wrapped in Printable Class) */}
+          <div className="printable overflow-auto rounded-lg shadow-md">
+            <table className="min-w-full bg-white table-auto rounded-lg" ref={tableRef}>
               <thead>
               <tr className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
                 <th className="px-6 py-4 text-left text-md font-medium">Customer Name</th>
                 <th className="px-6 py-4 text-left text-md font-medium">Mobile Number</th>
-                <th className="px-6 py-4 text-left text-md font-medium">Total Payable</th>
-                <th className="px-6 py-4 text-left text-md font-medium">Total Amount Received</th>
                 <th className="px-6 py-4 text-left text-md font-medium">Pending Amount</th> {/* New Column */}
               </tr>
               </thead>
               <tbody>
               {Array.isArray(filteredAccounts) && filteredAccounts.length > 0 ? (
                   filteredAccounts.map((account) => (
-                      <tr
-                          key={account.id}
-                          className="hover:bg-indigo-50 transition duration-150 ease-in-out text-gray-700"
-                      >
+                      <tr key={account.id} className="hover:bg-indigo-50 transition duration-150 ease-in-out text-gray-700">
                         <td className="px-6 py-4 text-md font-medium">{account.customerId.name}</td>
                         <td className="px-6 py-4">{account.customerId.mobileNumber}</td>
-                        <td className="px-6 py-4">{account.totalPayable}</td>
-                        <td className="px-6 py-4">{account.totalAmountRecevied}</td>
-                        <td className="px-6 py-4">{account.totalPayable - account.totalAmountRecevied}</td> {/* Pending Amount Calculation */}
+                        <td className="px-6 py-4">{Math.round(account.totalPayable - account.totalAmountRecevied)}</td> {/* Pending Amount Calculation */}
                       </tr>
                   ))
               ) : (
                   <tr>
-                    <td colSpan="5" className="text-center px-6 py-4 text-md font-medium text-gray-600">
-                      No accounts found.
-                    </td>
+                    <td colSpan="3" className="text-center px-6 py-4 text-md font-medium text-gray-600">No accounts found.</td>
                   </tr>
               )}
               </tbody>

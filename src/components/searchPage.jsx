@@ -236,7 +236,7 @@ const SearchPage = () => {
                         </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                        {searchResults.map((invoice) => (
+                        {searchResults.slice().reverse().map((invoice) => (
                             <tr
                                 key={invoice._id || invoice.id}
                                 onClick={() => handleInvoiceClick(invoice._id || invoice.id)}
@@ -245,7 +245,7 @@ const SearchPage = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.billNumber}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{new Date(invoice.billDate).toLocaleDateString('en-GB').replace(/\//g, '-')}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.customerId?.name}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.grandtotal ? invoice.grandtotal.toFixed(2) : '0.00'}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{invoice.grandtotal ? Math.round(invoice.grandtotal) : '0'}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                     <button
                                         onClick={(e) => {
