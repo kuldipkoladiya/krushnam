@@ -25,6 +25,24 @@ const Firstpage = () => {
     const [isSuccess, setIsSuccess] = React.useState(true);
 
     useEffect(() => {
+        const fetchLastBillNumber = async () => {
+            try {
+                const response = await fetch('https://shreeji-be.vercel.app/v1/user/invoice/');
+                if (!response.ok) throw new Error('Failed to fetch invoice data');
+
+                const invoiceData = await response.json();
+                const lastInvoice = invoiceData.data.sort((a, b) => b.billNumber - a.billNumber)[0]; // Get the latest invoice
+                const lastBillNumber = lastInvoice ? lastInvoice.billNumber : 0; // Set to 0 if no invoices found
+
+                setBillNo(lastBillNumber + 1); // Set the next bill number
+            } catch (error) {
+                console.error('Error fetching the last bill number:', error);
+            }
+        };
+
+        fetchLastBillNumber();
+    }, []);
+    useEffect(() => {
         const lastBillNo = localStorage.getItem('lastBillNo');
         const parsedBillNo = lastBillNo ? parseInt(lastBillNo, 10) : 0;
         setBillNo(parsedBillNo);
