@@ -32,16 +32,20 @@ const MonthlyBillPage = () => {
         window.location.reload();
     };
     const handleKeyDown = (e) => {
-        // if (e.key === 'ArrowDown' && selectedSuggestionIndex < customerSuggestions.length - 1) {
-        //     setSelectedSuggestionIndex(selectedSuggestionIndex + 1);
-        // } else if (e.key === 'ArrowUp' && selectedSuggestionIndex > 0) {
-        //     setSelectedSuggestionIndex(selectedSuggestionIndex - 1);
-        // } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
-        //     const selectedCustomer = customerSuggestions[selectedSuggestionIndex];
-        //     setCustomerName(selectedCustomer.name);
-        //     setCustomerId(selectedCustomer.id);
-        //     setShowSuggestions(false);
-        // }
+        if (e.key === 'ArrowDown' && selectedSuggestionIndex < suggestions.length - 1) {
+            // Move the selection down
+            setSelectedSuggestionIndex(selectedSuggestionIndex + 1);
+        } else if (e.key === 'ArrowUp' && selectedSuggestionIndex > 0) {
+            // Move the selection up
+            setSelectedSuggestionIndex(selectedSuggestionIndex - 1);
+        } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
+            // Select the currently highlighted suggestion
+            const selectedCustomer = suggestions[selectedSuggestionIndex];
+            handleSuggestionClick(selectedCustomer);  // Trigger the suggestion click
+        } else if (e.key === 'Escape') {
+            // Close the suggestion box
+            setShowSuggestions(false);
+        }
         if (e.key === 'Enter') {
             e.preventDefault(); // Prevent form submission
             saveSheetData(); // Call save function
@@ -97,22 +101,22 @@ const MonthlyBillPage = () => {
         }
     };
     // Fetch pending payment details
-    const fetchCustomerAccountDetails = async (customerName) => {
+    const fetchCustomerAccountDetails = async (customerId) => {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch(`https://shreeji-be.vercel.app/v1/user/customerAccount/get-by-name/${customerName}`);
+            const response = await fetch(`https://shreeji-be.vercel.app/v1/user/customerAccount/get-by-id/${customerId}`);
             if (!response.ok) throw new Error('Failed to fetch customer account details');
 
             const result = await response.json();
-            console.log('Fetched Customer Account Details:', result); // Log the response
+            console.log('Fetched Customer Account Details:', result);
 
-            const { totalPayable, totalAmountRecevied, id } = result.data; // Access the id directly from the result
+            const { totalPayable, totalAmountRecevied, id } = result.data;
             const pending = totalPayable - totalAmountRecevied;
             setPendingAmount(pending);
-            setCustomerAccountId(id); // Set customerAccountId
+            setCustomerAccountId(id);
 
-            console.log('Customer Account ID:', id); // Log the ID to confirm it's being set
+            console.log('Customer Account ID:', id);
         } catch (err) {
             setError('Error fetching customer account details. Please try again.');
             console.error('Error fetching customer account details:', err);
@@ -120,11 +124,12 @@ const MonthlyBillPage = () => {
         setLoading(false);
     };
 
+
     const handleSuggestionClick = (suggestion) => {
         setCustomerName(suggestion.name);
         setCustomerId(suggestion.id);
         setSuggestions([]);
-        fetchCustomerAccountDetails(suggestion.name); // Fetch details when a suggestion is clicked
+        fetchCustomerAccountDetails(suggestion.id); // Fetch details when a suggestion is clicked
     };
 
     const handleSearch = async (e) => {
@@ -288,23 +293,25 @@ const MonthlyBillPage = () => {
                             type="text"
                             value={customerName}
                             onChange={handleCustomerNameChange}
+                            onKeyDown={handleKeyDown}
                             placeholder="Enter customer name"
                             className="border rounded-lg p-3 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400"
                         />
 
                         {suggestions.length > 0 && (
                             <ul ref={suggestionBoxRef} className="absolute z-10 mt-10 w-96 bg-white border rounded-lg shadow-lg max-h-56 overflow-y-auto">
-                                {suggestions.map((suggestion) => (
+                                {suggestions.map((suggestion, index) => (
                                     <li
                                         key={suggestion.id}
                                         onClick={() => handleSuggestionClick(suggestion)}
-                                        className="cursor-pointer px-4 py-2 hover:bg-gray-200"
+                                        className={`cursor-pointer px-4 py-2 ${index === selectedSuggestionIndex ? 'bg-gray-300' : 'hover:bg-gray-200'}`}
                                     >
                                         {suggestion.name}
                                     </li>
                                 ))}
                             </ul>
                         )}
+
 
                         <input
                             type="date"
