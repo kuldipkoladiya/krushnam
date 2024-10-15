@@ -60,7 +60,11 @@ const PayablePage = () => {
     );
     setFilteredAccounts(filtered);
   };
-
+  const getTotalPendingAmountForAllAccounts = () => {
+    return allAccounts.reduce((acc, account) => {
+      return acc + Math.round(account.totalPayable - account.totalAmountRecevied);
+    }, 0);
+  };
   // Handle Home button click to navigate to "/"
   const handleHomeClick = () => {
     navigate('/'); // Navigates to the home page ("/")
@@ -172,7 +176,7 @@ const PayablePage = () => {
               <tr className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
                 <th className="px-6 py-4 text-left text-md font-medium">Customer Name</th>
                 <th className="px-6 py-4 text-left text-md font-medium">Mobile Number</th>
-                <th className="px-6 py-4 text-left text-md font-medium">Pending Amount</th> {/* New Column */}
+                <th className="px-6 py-4 text-left text-md font-medium">Pending Amount</th>
               </tr>
               </thead>
               <tbody>
@@ -181,7 +185,7 @@ const PayablePage = () => {
                       <tr key={account.id} className="hover:bg-indigo-50 transition duration-150 ease-in-out text-gray-700">
                         <td className="px-6 py-4 text-md font-medium">{account.customerId.name}</td>
                         <td className="px-6 py-4">{account.customerId.mobileNumber}</td>
-                        <td className="px-6 py-4">{Math.round(account.totalPayable - account.totalAmountRecevied)}</td> {/* Pending Amount Calculation */}
+                        <td className="px-6 py-4">{Math.round(account.totalPayable - account.totalAmountRecevied)}</td>
                       </tr>
                   ))
               ) : (
@@ -191,6 +195,11 @@ const PayablePage = () => {
               )}
               </tbody>
             </table>
+          </div>
+
+          {/* Display Total Pending Amount for All Accounts */}
+          <div className="mt-4 text-right text-lg font-bold text-gray-800">
+            Total Pending Amount for All Accounts: ₹{getTotalPendingAmountForAllAccounts().toFixed(2)}
           </div>
 
           {/* Loading Spinner */}
