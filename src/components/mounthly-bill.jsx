@@ -22,6 +22,61 @@ const MonthlyBillPage = () => {
     const [sheetDate, setSheetDate] = useState('');
     const [isSaved, setIsSaved] = useState(false);
     const [extraId, setExtraId] = useState(null);
+
+    useEffect(() => {
+        const savedCustomerName = localStorage.getItem('customerName');
+        const savedCustomerId = localStorage.getItem('customerId');
+        const savedFromDate = localStorage.getItem('fromDate');
+        const savedToDate = localStorage.getItem('toDate');
+        const savedSheet1 = localStorage.getItem('sheet1');
+        const savedSheet2 = localStorage.getItem('sheet2');
+        const savedSheetDate = localStorage.getItem('sheetDate');
+
+        if (savedCustomerName) setCustomerName(savedCustomerName);
+        if (savedCustomerId) setCustomerId(savedCustomerId);
+        if (savedFromDate) setFromDate(savedFromDate);
+        if (savedToDate) setToDate(savedToDate);
+        if (savedSheet1) setSheet1(savedSheet1);
+        if (savedSheet2) setSheet2(savedSheet2);
+        if (savedSheetDate) setSheetDate(savedSheetDate);
+    }, []);
+
+    // Save data to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('customerName', customerName);
+        localStorage.setItem('customerId', customerId);
+        localStorage.setItem('fromDate', fromDate);
+        localStorage.setItem('toDate', toDate);
+        localStorage.setItem('sheet1', sheet1);
+        localStorage.setItem('sheet2', sheet2);
+        localStorage.setItem('sheetDate', sheetDate);
+    }, [customerName, customerId, fromDate, toDate, sheet1, sheet2, sheetDate]);
+
+    // Handle customer name input and suggestions
+    const handleCustomerNameChange = async (e) => {
+        const value = e.target.value;
+        setCustomerName(value);
+
+        if (value) {
+            setLoading(true);
+            setError('');
+            try {
+                const response = await fetch('https://shreeji-be.vercel.app/v1/user/customer/');
+                if (!response.ok) throw new Error('Failed to fetch customer suggestions');
+                const result = await response.json();
+                const filteredSuggestions = result.data.filter(customer =>
+                    customer.name.toLowerCase().includes(value.toLowerCase())
+                );
+                setSuggestions(filteredSuggestions);
+            } catch (err) {
+                setError('Error fetching customer suggestions. Please try again.');
+                console.error('Error fetching customer suggestions:', err);
+            }
+            setLoading(false);
+        } else {
+            setSuggestions([]);
+        }
+    };
     const handlePrint = () => {
         const printContents = document.getElementById('printable-area').innerHTML;
         const originalContents = document.body.innerHTML;
@@ -30,6 +85,19 @@ const MonthlyBillPage = () => {
         window.print();
         document.body.innerHTML = originalContents;
         window.location.reload();
+    };
+    const handleReset = () => {
+        setCustomerName('');
+        setCustomerId('');
+        setFromDate('');
+        setToDate('');
+        setSheet1('');
+        setSheet2('');
+        setSheetDate('');
+        localStorage.clear(); // Clear all saved data from localStorage
+        setIsSaved(false); // Reset the saved state
+        setSearchResults([]); // Clear the search results
+        setPendingAmount(0); // Reset pending amount
     };
     const handleKeyDown = (e) => {
         if (e.key === 'ArrowDown' && selectedSuggestionIndex < suggestions.length - 1) {
@@ -76,30 +144,6 @@ const MonthlyBillPage = () => {
     };
 
     // Handle customer name input and suggestions
-    const handleCustomerNameChange = async (e) => {
-        const value = e.target.value;
-        setCustomerName(value);
-
-        if (value) {
-            setLoading(true);
-            setError('');
-            try {
-                const response = await fetch('https://shreeji-be.vercel.app/v1/user/customer/');
-                if (!response.ok) throw new Error('Failed to fetch customer suggestions');
-                const result = await response.json();
-                const filteredSuggestions = result.data.filter(customer =>
-                    customer.name.toLowerCase().includes(value.toLowerCase())
-                );
-                setSuggestions(filteredSuggestions);
-            } catch (err) {
-                setError('Error fetching customer suggestions. Please try again.');
-                console.error('Error fetching customer suggestions:', err);
-            }
-            setLoading(false);
-        } else {
-            setSuggestions([]);
-        }
-    };
     // Fetch pending payment details
     const fetchCustomerAccountDetails = async (customerId) => {
         setLoading(true);
@@ -349,6 +393,7 @@ const MonthlyBillPage = () => {
                             <span>Print Invoice</span>
                         </button>
 
+
                         <button
                             type="submit"
                             className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 flex items-center space-x-2"
@@ -367,6 +412,13 @@ const MonthlyBillPage = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                             </svg>
                             <span>Download as PDF</span>
+
+                        </button>
+                        <button
+                            onClick={handleReset}
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600"
+                        >
+                            Reset Form
                         </button>
                     </div>
                 </form>
