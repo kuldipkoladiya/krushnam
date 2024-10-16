@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf'; // Import jsPDF
+import companyNameImage from '../images/Black Minimalist Spooky Youtube Thumbnail.png'; // Ensure correct path
 
 const MonthlyBillPage = () => {
     const [customerName, setCustomerName] = useState('');
@@ -313,6 +314,70 @@ const MonthlyBillPage = () => {
         (total, invoice) => total + (invoice.grandtotal || 0),
         0
     );
+    const handleInvoiceDownload = async (invoice) => {
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const marginLeft = 20;
+
+        const addImageToPDF = (imageSrc, x, y, width, height) => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = imageSrc;
+                img.onload = () => {
+                    doc.addImage(img, 'PNG', x, y, width, height);
+                    resolve();
+                };
+                img.onerror = (error) => {
+                    reject(error);
+                };
+            });
+        };
+
+        try {
+            // Add company logo or name image (if any)
+            await addImageToPDF(companyNameImage, 30, 20, 160, 25);
+
+            doc.setFontSize(12);
+
+            // Add customer details
+            doc.text(`Customer Name: ${invoice.customerId?.name || 'Unknown'}`, marginLeft, 60);
+            doc.text(`Bill Number: ${invoice.billNumber}`, 150, 60); // Right-aligned bill number
+
+            // Add mobile number and date on the next line
+            doc.text(`Mobile Number: ${invoice.customerId?.mobileNumber || 'Unknown'}`, marginLeft, 70);
+            doc.text(`Bill Date: ${new Date(invoice.billDate).toLocaleDateString('en-GB')}`, 150, 70); // Right-aligned date
+
+            // Prepare table data for products
+            const tableData = invoice.products.map((product) => {
+                const productName = product.product.ProductName || 'Unknown Product';
+                return [productName, product.quantity, product.product.price.toFixed(2), product.total.toFixed(2)];
+            });
+
+            // Add table for products
+            doc.autoTable({
+                startY: 100,
+                head: [['Product', 'Quantity', 'Price', 'Total']],
+                body: tableData,
+                headStyles: { fillColor: [41, 128, 185] }, // Custom header style
+                styles: { fontSize: 10 },
+                columnStyles: {
+                    0: { cellWidth: 70 }, // Product column width
+                    1: { cellWidth: 30 }, // Quantity column width
+                    2: { cellWidth: 30 }, // Price column width
+                    3: { cellWidth: 40 }, // Total column width
+                }
+            });
+
+            // Add grand total below the table
+            const finalY = doc.lastAutoTable.finalY || 100;
+            doc.text(`Grand Total: ${invoice.grandtotal.toFixed(2)}`, marginLeft, finalY + 10);
+
+            // Download the PDF
+            doc.save(`invoice_${invoice.billNumber}.pdf`);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            setError('Error generating PDF. Please try again.');
+        }
+    };
 
 
     // Generate and download PDF
@@ -429,11 +494,11 @@ const MonthlyBillPage = () => {
                 {/* Loading Indicator */}
                 {loading && <div className="text-blue-500">Loading...</div>}
 
-                <div id="printable-area" className="bg-white border rounded-lg p-4 shadow-sm space-y-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div id="printable-area" className="bg-white border rounded-lg p-3 shadow-sm space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
                         {/* Left Side - Bill List */}
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             {searchResults.length > 0 && (
                                 <div className="bg-white border rounded-lg p-4 shadow-sm">
                                     <table id="invoice-table" className="min-w-full divide-y divide-gray-300">
@@ -446,12 +511,36 @@ const MonthlyBillPage = () => {
                                         </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
-                                        {searchResults.map((invoice) => (
-                                            <tr key={invoice.id} className="cursor-pointer hover:bg-gray-100" onClick={() => handleInvoiceClick(invoice.id)}>
+                                        {searchResults.map((invoice, index) => (
+                                            <tr key={index} className="hover:bg-gray-100 transition duration-150" onClick={() => handleInvoiceClick(invoice.id)}>
                                                 <td className="px-6 py-4 whitespace-nowrap">{invoice.billNumber}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">{new Date(invoice.billDate).toLocaleDateString('en-GB')}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">{invoice.customerId ? invoice.customerId.name : 'Unknown'}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">{invoice.grandtotal ? invoice.grandtotal.toFixed(2) : '0.00'}</td>
+                                                <td className="px-0 py-4 whitespace-nowrap">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Prevent row click
+                                                            handleInvoiceDownload(invoice); // Only trigger download
+                                                        }}
+                                                        className="bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-600 flex items-center justify-center"
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            strokeWidth="1.5"
+                                                            stroke="currentColor"
+                                                            className="w-5 h-5"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                d="M3 16.5v1.875A2.625 2.625 0 005.625 21h12.75A2.625 2.625 0 0021 18.375V16.5M7.5 12l4.5 4.5m0 0l4.5-4.5m-4.5 4.5V3"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))}
                                         </tbody>
