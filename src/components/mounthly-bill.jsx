@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf'; // Import jsPDF
 import companyNameImage from '../images/Black Minimalist Spooky Youtube Thumbnail.png'; // Ensure correct path
 
@@ -124,25 +125,56 @@ const MonthlyBillPage = () => {
         navigate('/');
     };
     const handleDownload = () => {
-        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdf = new jsPDF('p', 'mm', 'a4'); // Create PDF document
 
-        // Set the scaling factor to 0.3 or 0.2 for more scaling
-        const scalingFactor = 0.2; // You can experiment with this value
-        const margins = { top: 7, left: 1 };
+        const element = document.getElementById('printable-area'); // Select the area to be printed
 
-        pdf.html(document.getElementById('printable-area'), {
-            callback: function (doc) {
-                doc.save('transaction-details.pdf');
-            },
-            x: margins.left,
-            y: margins.top,
-            html2canvas: {
-                scale: scalingFactor,
-                width: pdf.internal.pageSize.getWidth() - margins.left * 2,
-                height: pdf.internal.pageSize.getHeight() - margins.top * 2
+        const pageWidth = pdf.internal.pageSize.getWidth(); // PDF page width
+        const pageHeight = pdf.internal.pageSize.getHeight(); // PDF page height
+
+        html2canvas(element, {
+            scale: 3, // Increase scale for higher resolution
+            useCORS: true, // Handle CORS issues with external images if any
+        }).then((canvas) => {
+            const imgWidth = pageWidth; // Full page width
+            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+
+            let position = 0; // Starting position on the first page
+            let pageCount = 0; // Track the number of pages
+            const totalHeight = canvas.height; // Total height of the content
+
+            while (position < totalHeight) {
+                if (pageCount > 0) {
+                    pdf.addPage(); // Add a new page after the first one
+                }
+
+                // Render a portion of the image corresponding to the current page
+                const canvasPart = document.createElement('canvas');
+                const context = canvasPart.getContext('2d');
+
+                // Set canvas size to current portion of the page
+                canvasPart.width = canvas.width;
+                canvasPart.height = Math.min(canvas.height - position, pageHeight * (canvas.width / pageWidth));
+
+                // Draw the current portion on the canvas
+                context.drawImage(canvas, 0, position, canvas.width, canvasPart.height, 0, 0, canvas.width, canvasPart.height);
+
+                // Convert this portion to image and add it to the PDF
+                const imgData = canvasPart.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, (canvasPart.height * imgWidth) / canvas.width);
+
+                position += canvasPart.height; // Move the position for the next part
+                pageCount++;
             }
+
+            // Save the PDF file
+            pdf.save('transaction-details.pdf');
+        }).catch((error) => {
+            console.error('Error generating PDF:', error);
+            setError('Error generating PDF. Please try again.');
         });
     };
+
 
     // Handle customer name input and suggestions
     // Fetch pending payment details
@@ -494,11 +526,11 @@ const MonthlyBillPage = () => {
                 {/* Loading Indicator */}
                 {loading && <div className="text-blue-500">Loading...</div>}
 
-                <div id="printable-area" className="bg-white border rounded-lg p-3 shadow-sm space-y-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div id="printable-area" className="bg-white border rounded-lg p-4 shadow-sm space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                         {/* Left Side - Bill List */}
-                        <div className="space-y-6">
+                        <div className="space-y-4">
                             {searchResults.length > 0 && (
                                 <div className="bg-white border rounded-lg p-4 shadow-sm">
                                     <table id="invoice-table" className="min-w-full divide-y divide-gray-300">
