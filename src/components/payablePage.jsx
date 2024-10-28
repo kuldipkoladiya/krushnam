@@ -1,32 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import companyNameImage from '../images/Black Minimalist Spooky Youtube Thumbnail.png'; // Import your logo
 
 const PayablePage = () => {
-  const [searchQuery, setSearchQuery] = useState(''); // For holding the search input value
-  const [allAccounts, setAllAccounts] = useState([]); // To store all customer accounts
-  const [filteredAccounts, setFilteredAccounts] = useState([]); // To store filtered customer accounts
-  const [loading, setLoading] = useState(false); // To handle loading state
-  const [error, setError] = useState(''); // For error handling
+  const [searchQuery, setSearchQuery] = useState('');
+  const [allAccounts, setAllAccounts] = useState([]);
+  const [filteredAccounts, setFilteredAccounts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const navigate = useNavigate(); // Initialize navigate function
-  const tableRef = useRef(); // To reference the table for printing
+  const navigate = useNavigate();
+  const tableRef = useRef();
 
-  // Fetch all customer accounts to display in the table
   const fetchAllAccounts = async () => {
     setLoading(true);
     try {
       const response = await fetch('https://shreeji-be.vercel.app/v1/user/customerAccount/');
       if (!response.ok) throw new Error('Failed to fetch all accounts');
       const result = await response.json();
-
-      // Check if result.data is an array and set the accounts accordingly
       if (Array.isArray(result.data)) {
         setAllAccounts(result.data);
-        setFilteredAccounts(result.data); // Initially set filtered accounts to all accounts
+        setFilteredAccounts(result.data);
       } else {
-        setAllAccounts([]); // If it's not an array, set it to an empty array to avoid map issues
+        setAllAccounts([]);
         setFilteredAccounts([]);
       }
     } catch (err) {
@@ -36,41 +34,36 @@ const PayablePage = () => {
     setLoading(false);
   };
 
-  // Fetch all accounts when the component mounts
   useEffect(() => {
     fetchAllAccounts();
   }, []);
 
-  // Handle search input change and filter accounts based on the input
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-
-    // Filter the accounts based on the search input (customer name)
     const filtered = allAccounts.filter((account) =>
         account.customerId.name.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredAccounts(filtered);
   };
 
-  // Handle search button click
   const handleSearchClick = () => {
     const filtered = allAccounts.filter((account) =>
         account.customerId.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredAccounts(filtered);
   };
+
   const getTotalPendingAmountForAllAccounts = () => {
     return allAccounts.reduce((acc, account) => {
       return acc + Math.round(account.totalPayable - account.totalAmountRecevied);
     }, 0);
   };
-  // Handle Home button click to navigate to "/"
+
   const handleHomeClick = () => {
-    navigate('/'); // Navigates to the home page ("/")
+    navigate('/');
   };
 
-  // Download PDF functionality
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     doc.text('Customer Accounts', 14, 10);
@@ -85,7 +78,6 @@ const PayablePage = () => {
     doc.save('customer-accounts.pdf');
   };
 
-  // Print functionality (only prints the table data)
   const handlePrint = () => {
     window.print();
   };
@@ -94,7 +86,12 @@ const PayablePage = () => {
       <div className="p-8 bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center relative">
         <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl relative">
 
-          {/* Home Button with Gradient */}
+          {/* Logo to be displayed in Print */}
+          <div className="print-logo-container flex flex-col items-center justify-center mb-4">
+            <img src={companyNameImage} alt="Company Logo" className="print-logo h-20 mb-4 " />
+          </div>
+
+          {/* Home Button */}
           <button
               onClick={handleHomeClick}
               className="fixed top-8 left-8 bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-5 py-3 rounded-full shadow-lg hover:from-purple-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all flex items-center space-x-2"

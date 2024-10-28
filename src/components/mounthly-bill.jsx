@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf'; // Import jsPDF
 import companyNameImage from '../images/Black Minimalist Spooky Youtube Thumbnail.png'; // Ensure correct path
+import '../App.css';
 
 const MonthlyBillPage = () => {
     const [customerName, setCustomerName] = useState('');
@@ -80,13 +81,18 @@ const MonthlyBillPage = () => {
         }
     };
     const handlePrint = () => {
-        const printContents = document.getElementById('printable-area').innerHTML;
         const originalContents = document.body.innerHTML;
+        const printContents = document.getElementById('printable-area').innerHTML;
 
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-        window.location.reload();
+        // Temporarily insert the logo at the top for printing
+        const logoImage = `<img src="${companyNameImage}" alt="Company Logo" id="logo" style="width: 200px; display: block; margin-bottom: 20px;" />`;
+
+        document.body.innerHTML = `${logoImage}${printContents}`;
+
+        window.print(); // Trigger the print dialog
+
+        document.body.innerHTML = originalContents; // Restore the original content after printing
+        window.location.reload(); // Optionally reload to restore functionality
     };
     const handleReset = () => {
         setCustomerName('');
@@ -125,55 +131,47 @@ const MonthlyBillPage = () => {
         navigate('/');
     };
     const handleDownload = () => {
-        const pdf = new jsPDF('p', 'mm', 'a4'); // Create PDF document
-
+        const pdf = new jsPDF('p', 'mm', 'a4'); // Create a PDF document
         const element = document.getElementById('printable-area'); // Select the area to be printed
 
-        const pageWidth = pdf.internal.pageSize.getWidth(); // PDF page width
-        const pageHeight = pdf.internal.pageSize.getHeight(); // PDF page height
+        const pageWidth = pdf.internal.pageSize.getWidth(); // Get PDF page width
+        const pageHeight = pdf.internal.pageSize.getHeight(); // Get PDF page height
 
-        html2canvas(element, {
-            scale: 3, // Increase scale for higher resolution
-            useCORS: true, // Handle CORS issues with external images if any
-        }).then((canvas) => {
-            const imgWidth = pageWidth; // Full page width
-            const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
+        const logoImage = new Image(); // Create new image object
+        logoImage.src = companyNameImage; // Assign the imported image to it
 
-            let position = 0; // Starting position on the first page
-            let pageCount = 0; // Track the number of pages
-            const totalHeight = canvas.height; // Total height of the content
+        logoImage.onload = function () {
+            // Add the logo at the top (adjust width and height as needed)
+            pdf.addImage(logoImage, 'PNG', 30, 20, 160, 25); // Adjust dimensions to fit the PDF
 
-            while (position < totalHeight) {
-                if (pageCount > 0) {
-                    pdf.addPage(); // Add a new page after the first one
-                }
+            let yOffset = 50; // Position the content below the logo
 
-                // Render a portion of the image corresponding to the current page
-                const canvasPart = document.createElement('canvas');
-                const context = canvasPart.getContext('2d');
+            // Use html2canvas to capture the HTML content
+            html2canvas(element, {
+                scale: 3, // Increase the scale for better resolution
+                useCORS: true, // Handle CORS issues for images
+            }).then((canvas) => {
+                const imgWidth = pageWidth - 20; // Full width for PDF minus padding
+                const imgHeight = (canvas.height * imgWidth) / canvas.width; // Maintain aspect ratio
 
-                // Set canvas size to current portion of the page
-                canvasPart.width = canvas.width;
-                canvasPart.height = Math.min(canvas.height - position, pageHeight * (canvas.width / pageWidth));
+                // Add the captured HTML content below the logo
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 10, yOffset, imgWidth, imgHeight);
 
-                // Draw the current portion on the canvas
-                context.drawImage(canvas, 0, position, canvas.width, canvasPart.height, 0, 0, canvas.width, canvasPart.height);
+                // Set a small font size for additional details (e.g., footer)
+                pdf.setFontSize(5);
 
-                // Convert this portion to image and add it to the PDF
-                const imgData = canvasPart.toDataURL('image/png');
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, (canvasPart.height * imgWidth) / canvas.width);
+                // Optionally, add any footer text (adjust coordinates as needed)
+                // pdf.text('Footer text', 10, pageHeight - 10);
 
-                position += canvasPart.height; // Move the position for the next part
-                pageCount++;
-            }
-
-            // Save the PDF file
-            pdf.save('transaction-details.pdf');
-        }).catch((error) => {
-            console.error('Error generating PDF:', error);
-            setError('Error generating PDF. Please try again.');
-        });
+                // Save the generated PDF with the logo and content
+                pdf.save('transaction-details-with-logo.pdf');
+            }).catch((error) => {
+                console.error('Error generating PDF:', error);
+                // Handle the error appropriately
+            });
+        };
     };
+
 
 
     // Handle customer name input and suggestions
@@ -415,7 +413,10 @@ const MonthlyBillPage = () => {
     // Generate and download PDF
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-10">
+        <div className="min-h-screen bg-white from-blue-50 to-purple-100 py-10">
+            <div className="print-logo-container flex flex-col items-center justify-center mb-4">
+                <img src={companyNameImage} alt="Company Logo" className="print-logo h-20 mb-4 " />
+            </div>
             {/* Header Section (Payable Page Style) */}
             <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 p-8 rounded-xl mb-8 shadow-md max-w-7xl mx-auto">
                 <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
@@ -532,7 +533,7 @@ const MonthlyBillPage = () => {
                         {/* Left Side - Bill List */}
                         <div className="space-y-4">
                             {searchResults.length > 0 && (
-                                <div className="bg-white border rounded-lg p-4 shadow-sm">
+                                <div className="bg-white border rounded-lg p-5 shadow-sm">
                                     <table id="invoice-table" className="min-w-full divide-y divide-gray-300">
                                         <thead>
                                         <tr>

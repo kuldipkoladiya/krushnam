@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {jsPDF} from "jspdf";
 import {useNavigate} from "react-router-dom";
+import companyNameImage from "../images/Black Minimalist Spooky Youtube Thumbnail.png";
 
 const ExtraBillPage = () => {
     const [customerName, setCustomerName] = useState('');
@@ -148,7 +149,9 @@ const ExtraBillPage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-10">
             <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8">
-
+                <div className="print-logo-container flex flex-col items-center justify-center mb-4">
+                    <img src={companyNameImage} alt="Company Logo" className="print-logo h-20 mb-4 " />
+                </div>
                 {/* Header Section */}
                 <div className="relative bg-gradient-to-r from-indigo-500 to-purple-500 p-8 rounded-xl mb-8 shadow-md">
                     {/* Background pattern */}

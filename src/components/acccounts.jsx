@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {useNavigate} from "react-router-dom";
 import html2canvas from "html2canvas";
 import {jsPDF} from "jspdf";
+import companyNameImage from "../images/Black Minimalist Spooky Youtube Thumbnail.png";
 
 const AccountsPage = () => {
     const [customerName, setCustomerName] = useState('');
@@ -187,9 +188,13 @@ const AccountsPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 py-10">
+        <div className="min-h-screen bg-white from-blue-50 to-purple-100 py-10">
+            <div className="print-logo-container flex flex-col items-center justify-center mb-4">
+                <img src={companyNameImage} alt="Company Logo" className="print-logo h-20 mb-4" />
+            </div>
             {/* Header Section */}
             <div className="relative bg-gradient-to-r from-purple-500 to-indigo-500 p-8 rounded-xl mb-8 shadow-md max-w-7xl mx-auto">
+
                 <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
                 <div className="relative z-10 text-center">
                     <h1 className="text-4xl font-bold text-white mb-2">Customer Accounts</h1>
