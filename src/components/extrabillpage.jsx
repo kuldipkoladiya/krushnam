@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {jsPDF} from "jspdf";
 import {useNavigate} from "react-router-dom";
 import companyNameImage from "../images/Black Minimalist Spooky Youtube Thumbnail.png";
-
+import '../App.css';
 const ExtraBillPage = () => {
     const [customerName, setCustomerName] = useState('');
     const [customers, setCustomers] = useState([]);
@@ -55,13 +55,19 @@ const ExtraBillPage = () => {
         navigate('/');
     };
     const handlePrint = () => {
-        const printContents = document.getElementById('printable-area').innerHTML; // Get the specific div HTML
-        const originalContents = document.body.innerHTML; // Store original HTML
+        const originalContents = document.body.innerHTML;
+        const printContents = document.getElementById('printable-area').innerHTML;
 
-        document.body.innerHTML = printContents; // Replace body HTML with the specific div
+        // Temporarily insert the logo at the top for printing
+        const logoImage = `<img src="${companyNameImage}" alt="Company Logo" id="logo" style="width: 200px; display: block; margin-bottom: 20px;" />`;
+        const name  = `<h2 style="display: block; font-size: 20px; font-weight: bold; margin-left: 25px; margin-bottom: 5px;">Name: ${customerName}</h2>`;
+
+        document.body.innerHTML = `${logoImage}${name}${printContents}`;
+
         window.print(); // Trigger the print dialog
-        document.body.innerHTML = originalContents; // Restore original HTML after printing
-        window.location.reload(); // Reload the page to restore component state
+
+        document.body.innerHTML = originalContents; // Restore the original content after printing
+        window.location.reload(); // Optionally reload to restore functionality
     };
     // Handle customer search suggestions
     useEffect(() => {

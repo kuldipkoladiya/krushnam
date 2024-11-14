@@ -86,8 +86,9 @@ const MonthlyBillPage = () => {
 
         // Temporarily insert the logo at the top for printing
         const logoImage = `<img src="${companyNameImage}" alt="Company Logo" id="logo" style="width: 200px; display: block; margin-bottom: 20px;" />`;
+        const name  = `<h2 style="display: block; font-size: 20px; font-weight: bold; margin-left: 25px; margin-bottom: 5px;">Name: ${customerName}</h2>`;
 
-        document.body.innerHTML = `${logoImage}${printContents}`;
+        document.body.innerHTML = `${logoImage}${name}${printContents}`;
 
         window.print(); // Trigger the print dialog
 
@@ -366,7 +367,7 @@ const MonthlyBillPage = () => {
             // Add company logo or name image (if any)
             await addImageToPDF(companyNameImage, 30, 20, 160, 25);
 
-            doc.setFontSize(12);
+            doc.setFontSize(15);
 
             // Add customer details
             doc.text(`Customer Name: ${invoice.customerId?.name || 'Unknown'}`, marginLeft, 60);
@@ -388,7 +389,7 @@ const MonthlyBillPage = () => {
                 head: [['Product', 'Quantity', 'Price', 'Total']],
                 body: tableData,
                 headStyles: { fillColor: [41, 128, 185] }, // Custom header style
-                styles: { fontSize: 10 },
+                styles: { fontSize: 15 },
                 columnStyles: {
                     0: { cellWidth: 70 }, // Product column width
                     1: { cellWidth: 30 }, // Quantity column width

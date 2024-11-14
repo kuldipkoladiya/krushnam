@@ -40,13 +40,19 @@ const PaymentPage = () => {
     };
 
     const handlePrint = () => {
-        const printContents = document.getElementById('printable-area').innerHTML;
         const originalContents = document.body.innerHTML;
+        const printContents = document.getElementById('printable-area').innerHTML;
 
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-        window.location.reload();
+        // Temporarily insert the logo at the top for printing
+        const logoImage = `<img src="${companyNameImage}" alt="Company Logo" id="logo" style="width: 200px; display: block; margin-bottom: 20px;" />`;
+        const name  = `<h2 style="display: block; font-size: 20px; font-weight: bold; margin-left: 25px; margin-bottom: 5px;">Name: ${customerName}</h2>`;
+
+        document.body.innerHTML = `${logoImage}${name}${printContents}`;
+
+        window.print(); // Trigger the print dialog
+
+        document.body.innerHTML = originalContents; // Restore the original content after printing
+        window.location.reload(); // Optionally reload to restore functionality
     };
 
     // Fetch customers initially

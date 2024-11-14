@@ -1,25 +1,86 @@
 @media print {
+  /* Compact font and line height for the entire document */
+  body {
+    font-size: 12px;
+    line-height: 1.1;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Full-width for the printable area with minimal padding */
+  #printable-area {
+    width: 100%;
+    font-size: 10px;
+    padding: 0;
+  }
+
+  /* Smaller header and title font sizes */
+  h1 {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 2px;
+  }
+
+  h2, h3, .text-lg {
+    font-size: 10px;
+    margin-bottom: 1px;
+  }
+
+  /* Table styling for compact layout */
+  .table {
+    width: 100%;
+    font-size: 9px;
+    border-collapse: collapse;
+  }
+
+  /* Minimized padding and narrower font size in table cells */
+  .table th, .table td {
+    padding: 1px; /* Minimal padding */
+    font-size: 9px;
+    border: 1px solid #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Hide buttons and non-essential elements in print */
+  button, .header-section, .non-printable, .suggestion-box {
+    display: none !important;
+  }
+
+  /* Smaller logo for print */
   .print-logo {
-    display: block;
-    width: 500px; /* Set the width for printing */
-    margin: 0 auto 20px;
-
+    width: 40px;
+    margin-bottom: 2px;
   }
 
-  /* Print-specific styles */
-  table {
-    font-size: 8px;
+  /* Page break control */
+  .page-break {
+    page-break-before: always;
   }
 
-  th, td {
-    padding: 4px;
+  /* Minimal spacing around containers */
+  .section, .content, .container {
+    margin: 0;
+    padding: 0;
   }
 
-  .printable {
-    font-size: 5px;
+  /* Reduce column width to minimum possible based on content */
+  .table th:nth-child(1), .table td:nth-child(1) {
+    width: 5%; /* Adjust width as per data */
+  }
+  .table th:nth-child(2), .table td:nth-child(2) {
+    width: 5%;
+  }
+  .table th:nth-child(3), .table td:nth-child(3) {
+    width: 5%;
+  }
+  .table th:nth-child(4), .table td:nth-child(4) {
+    width: 5%;
   }
 
-  .no-print {
-    display: none;
+  /* Adjust column widths and minimize unused space */
+  .table th, .table td {
+    width: 1%; /* Allows the column width to automatically adjust */
   }
 }
