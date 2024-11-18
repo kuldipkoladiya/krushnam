@@ -60,14 +60,14 @@ const InvoicePage = () => {
 
             doc.setFontSize(12);
             doc.text(`Customer Name: ${invoiceData.customerId?.name || invoiceData.customerName}`, 20, 60);
-            doc.text(`Bill Number: ${invoiceData.billNumber}`, 150, 60); // Adjust this X position to align to the right
+            doc.text(`Bill Number: ${invoiceData.billNumber}`, 150, 60);
 
-// Second line: Mobile Number on the left, Bill Date on the right
             doc.text(`Mobile Number: ${invoiceData.customerId?.mobileNumber || invoiceData.mobileNo}`, 20, 70);
             doc.text(`Bill Date: ${new Date(invoiceData.billDate).toLocaleDateString('en-CA')}`, 150, 70);
 
             const tableData = invoiceData.products?.map(product => {
-                const productName = availableProducts.find(p => p.id === product.product)?.ProductName || 'Unknown Product';
+                const matchedProduct = availableProducts.find(p => p.id === product.product || p.id === product.product?.id);
+                const productName = matchedProduct ? matchedProduct.ProductName : 'Unknown Product';
                 return [productName, product.quantity, product.total.toFixed(2)];
             }) || [];
 
@@ -84,6 +84,7 @@ const InvoicePage = () => {
             setError('Error generating PDF. Please try again.');
         }
     };
+
 
     const handlePrint = () => {
         window.print();
