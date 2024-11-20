@@ -600,7 +600,7 @@ const Firstpage = () => {
                         <button
                             type="button"
                             onClick={handleAddProduct}
-                            className="bg-green-500 hover:bg-green-600 text-white py-2 px-5 rounded-full shadow-md transition-transform transform hover:scale-105"
+                            className="bg-gradient-to-r from-teal-400 to-green-400 hover:bg-green-600 text-white py-2 px-5 rounded-full shadow-md transition-transform transform hover:scale-105"
                         >
                             Add Product
                         </button>
@@ -615,21 +615,21 @@ const Firstpage = () => {
                     <div className="flex justify-end space-x-4 mt-8">
                         <button
                             type="submit"
-                            className="bg-teal-500 hover:bg-teal-600 text-white py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
+                            className="bg-gradient-to-r from-teal-400 to-green-400 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
                         >
                             Submit Invoice
                         </button>
                         <button
                             type="button"
                             onClick={handleUpdate}
-                            className="bg-rose-500 hover:bg-rose-600 text-white py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
+                            className="bg-gradient-to-r from-blue-400 to-blue-600 hover:bg-rose-600 text-white py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
                         >
                             Update Invoice
                         </button>
                         <button
                             type="button"
                             onClick={handleReset}
-                            className="bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
+                            className="bg-gradient-to-r from-red-400 to-pink-400 hover:bg-gray-600 text-white py-3 px-6 rounded-full shadow-md transition-transform transform hover:scale-105"
                         >
                             Reset
                         </button>

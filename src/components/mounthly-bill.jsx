@@ -85,8 +85,8 @@ const MonthlyBillPage = () => {
         const printContents = document.getElementById('printable-area').innerHTML;
 
         // Temporarily insert the logo at the top for printing
-        const logoImage = `<img src="${companyNameImage}" alt="Company Logo" id="logo" style="width: 200px; display: block; margin-bottom: 20px;" />`;
-        const name  = `<h2 style="display: block; font-size: 20px; font-weight: bold; margin-left: 25px; margin-bottom: 5px;">Name: ${customerName}</h2>`;
+        const logoImage = `<img src="${companyNameImage}" alt="Company Logo" id="logo" style="width: 200px; display: block; margin-bottom: 20px; " />`;
+        const name  = `<h2 style="display: block; font-size: 20px; font-weight: bold; margin-left: 25px; margin-bottom: 8px; ">Name: ${customerName}</h2>`;
 
         document.body.innerHTML = `${logoImage}${name}${printContents}`;
 
@@ -534,43 +534,54 @@ const MonthlyBillPage = () => {
                         {/* Left Side - Bill List */}
                         <div className="space-y-4">
                             {searchResults.length > 0 && (
-                                <div className="bg-white border rounded-lg p-5 shadow-sm">
-                                    <table id="invoice-table" className="min-w-full divide-y divide-gray-300">
-                                        <thead>
+                                <div className="overflow-x-auto bg-white border rounded-lg shadow-sm">
+                                    <table id="invoice-table" className="min-w-full text-xs text-gray-700">
+                                        <thead className="bg-gray-200">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Bill Number</th>
-                                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Date</th>
-                                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Customer Name</th>
-                                            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Grand Total</th>
+                                            <th className="px-2 py-1 text-left font-medium border-b border-gray-300">Bill #</th>
+                                            <th className="px-2 py-1 text-left font-medium border-b border-gray-300">Date</th>
+                                            <th className="px-2 py-1 text-left font-medium border-b border-gray-300">Customer</th>
+                                            <th className="px-2 py-1 text-right font-medium border-b border-gray-300">Total (₹)</th>
+                                            <th className="px-2 py-1 text-center font-medium border-b border-gray-300">Action</th>
                                         </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
+                                        <tbody>
                                         {searchResults.map((invoice, index) => (
-                                            <tr key={index} className="hover:bg-gray-100 transition duration-150" onClick={() => handleInvoiceClick(invoice.id)}>
-                                                <td className="px-6 py-4 whitespace-nowrap">{invoice.billNumber}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">{new Date(invoice.billDate).toLocaleDateString('en-GB')}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">{invoice.customerId ? invoice.customerId.name : 'Unknown'}</td>
-                                                <td className="px-6 py-4 whitespace-nowrap">{invoice.grandtotal ? invoice.grandtotal.toFixed(2) : '0.00'}</td>
-                                                <td className="px-0 py-4 whitespace-nowrap">
+                                            <tr
+                                                key={index}
+                                                className="hover:bg-gray-50 transition-colors cursor-pointer"
+                                                onClick={() => handleInvoiceClick(invoice.id)}
+                                            >
+                                                <td className="px-2 py-1 border-b border-gray-300">{invoice.billNumber}</td>
+                                                <td className="px-2 py-1 border-b border-gray-300">
+                                                    {new Date(invoice.billDate).toLocaleDateString('en-GB')}
+                                                </td>
+                                                <td className="px-2 py-1 border-b border-gray-300">
+                                                    {invoice.customerId?.name || 'Unknown'}
+                                                </td>
+                                                <td className="px-2 py-1 text-right border-b border-gray-300">
+                                                    {invoice.grandtotal?.toFixed(2) || '0.00'}
+                                                </td>
+                                                <td className="px-2 py-1 text-center border-b border-gray-300">
                                                     <button
                                                         onClick={(e) => {
-                                                            e.stopPropagation(); // Prevent row click
-                                                            handleInvoiceDownload(invoice); // Only trigger download
+                                                            e.stopPropagation();
+                                                            handleInvoiceDownload(invoice);
                                                         }}
-                                                        className="bg-green-500 text-white px-2 py-1 rounded-lg hover:bg-green-600 flex items-center justify-center"
+                                                        className="bg-gradient-to-r from-green-500 to-teal-500 text-white px-3 py-1 rounded shadow-sm hover:from-green-600 hover:via-green-600 hover:to-green-600 transition"
                                                     >
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
+                                                            className="w-4 h-4 inline-block"
                                                             fill="none"
                                                             viewBox="0 0 24 24"
-                                                            strokeWidth="1.5"
                                                             stroke="currentColor"
-                                                            className="w-5 h-5"
+                                                            strokeWidth={2}
                                                         >
                                                             <path
                                                                 strokeLinecap="round"
                                                                 strokeLinejoin="round"
-                                                                d="M3 16.5v1.875A2.625 2.625 0 005.625 21h12.75A2.625 2.625 0 0021 18.375V16.5M7.5 12l4.5 4.5m0 0l4.5-4.5m-4.5 4.5V3"
+                                                                d="M12 4v12m0 0l-3-3m3 3l3-3m-6 6h6"
                                                             />
                                                         </svg>
                                                     </button>
