@@ -189,7 +189,6 @@ const MonthlyBillPage = () => {
 
             const { totalPayable, totalAmountRecevied, id } = result.data;
             const pending = totalPayable - totalAmountRecevied;
-            setPendingAmount(pending);
             setCustomerAccountId(id);
 
             console.log('Customer Account ID:', id);
@@ -222,6 +221,7 @@ const MonthlyBillPage = () => {
             if (!response.ok) throw new Error('Failed to fetch search results');
             const result = await response.json();
             setSearchResults(result.invoices || []);
+            setPendingAmount(result.totalCustomerPendingAmount);
         } catch (err) {
             setError('Error fetching search results. Please try again.');
             console.error('Error fetching search results:', err);
