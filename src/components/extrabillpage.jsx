@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {jsPDF} from "jspdf";
 import {useNavigate} from "react-router-dom";
+import ConfirmationPopup from './ConfirmationPopup';
 import companyNameImage from "../images/Black Minimalist Spooky Youtube Thumbnail.png";
 import '../App.css';
 const ExtraBillPage = () => {
@@ -15,6 +16,10 @@ const ExtraBillPage = () => {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const suggestionBoxRef = useRef(null);
     const navigate = useNavigate();
+    const [showDeletePopup, setShowDeletePopup] = useState(false); // For controlling the delete popup
+    const [invoiceToDelete, setInvoiceToDelete] = useState(null); // Invoice ID to delete
+    const [loading, setLoading] = useState(false); // For showing a loading indicator
+    const [error, setError] = useState(''); // For displaying any error messages
 
 
     // Fetch customers initially
@@ -54,6 +59,7 @@ const ExtraBillPage = () => {
     const handleHome = () => {
         navigate('/');
     };
+
     const handlePrint = () => {
         const originalContents = document.body.innerHTML;
         const printContents = document.getElementById('printable-area').innerHTML;
@@ -150,6 +156,40 @@ const ExtraBillPage = () => {
             console.error('Error fetching customer transactions:', error);
             alert('Error fetching customer transactions. Please try again.');
         }
+    };
+
+    const openDeletePopup = (invoiceId) => {
+        setInvoiceToDelete(invoiceId);
+        setShowDeletePopup(true);
+    };
+
+    // Function to handle delete invoice
+    const handleDelete = async () => {
+        if (invoiceToDelete) {
+            setLoading(true);
+            setError('');
+            try {
+                const response = await fetch(`https://shreeji-be.vercel.app/v1/user/extra/${invoiceToDelete}`, {
+                    method: 'DELETE',
+                });
+                if (!response.ok) throw new Error('Failed to delete invoice');
+
+                // After deletion, refresh the invoice list
+                await handleFetchExtraData(); // Refresh the list after deleting the invoice
+                setInvoiceToDelete(null);
+                setShowDeletePopup(false);
+            } catch (err) {
+                setError('Error deleting invoice. Please try again.');
+                console.error('Error deleting invoice:', err);
+            }
+            setLoading(false);
+        }
+    };
+
+    // Function to close the delete confirmation popup
+    const closeDeletePopup = () => {
+        setShowDeletePopup(false);
+        setInvoiceToDelete(null);
     };
 
     return (
@@ -280,6 +320,7 @@ const ExtraBillPage = () => {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FYUSING</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sheet</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delete</th>
                                     </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
@@ -289,6 +330,18 @@ const ExtraBillPage = () => {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.sheet1}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.sheet2}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.customerId?.name || 'Unknown'}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">  <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openDeletePopup(transaction._id || transaction.id);
+                                                }}
+                                                className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center space-x-2"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                                <span>Delete</span>
+                                            </button></td>
                                         </tr>
                                     ))}
                                     </tbody>
@@ -297,6 +350,12 @@ const ExtraBillPage = () => {
                         </div>
                     )}
                 </div>
+                <ConfirmationPopup
+                    isOpen={showDeletePopup}
+                    onClose={closeDeletePopup}
+                    onConfirm={handleDelete}
+                    message="Are you sure you want to delete this invoice?"
+                />
             </div>
         </div>
 
