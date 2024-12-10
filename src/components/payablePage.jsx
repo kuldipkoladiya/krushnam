@@ -42,22 +42,20 @@ const PayablePage = () => {
     const value = e.target.value;
     setSearchQuery(value);
     const filtered = allAccounts.filter((account) =>
-        account.customerId.name.toLowerCase().includes(value.toLowerCase())
+        account.name.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredAccounts(filtered);
   };
 
   const handleSearchClick = () => {
     const filtered = allAccounts.filter((account) =>
-        account.customerId.name.toLowerCase().includes(searchQuery.toLowerCase())
+        account.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredAccounts(filtered);
   };
 
   const getTotalPendingAmountForAllAccounts = () => {
-    return allAccounts.reduce((acc, account) => {
-      return acc + Math.round(account.totalPayable - account.totalAmountRecevied);
-    }, 0);
+    return allAccounts.reduce((acc, account) => acc + account.totalCustomerPendingAmount, 0);
   };
 
   const handleHomeClick = () => {
@@ -70,10 +68,10 @@ const PayablePage = () => {
     doc.autoTable({
       head: [['Customer Name', 'Mobile Number', 'Pending Amount']],
       body: filteredAccounts.map((account) => [
-        account.customerId.name,
-        account.customerId.mobileNumber,
-        Math.round(account.totalPayable - account.totalAmountRecevied)
-      ])
+        account.name,
+        account.mobileNumber,
+        account.totalCustomerPendingAmount.toFixed(2),
+      ]),
     });
     doc.save('customer-accounts.pdf');
   };
@@ -86,9 +84,9 @@ const PayablePage = () => {
       <div className="p-8 bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center relative">
         <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl relative">
 
-          {/* Logo to be displayed in Print */}
+          {/* Logo */}
           <div className="print-logo-container flex flex-col items-center justify-center mb-4">
-            <img src={companyNameImage} alt="Company Logo" className="print-logo h-20 mb-4 " />
+            <img src={companyNameImage} alt="Company Logo" className="print-logo h-20 mb-4" />
           </div>
 
           {/* Home Button */}
@@ -113,7 +111,7 @@ const PayablePage = () => {
             <span>Home</span>
           </button>
 
-          {/* Compact Header Section */}
+          {/* Header */}
           <div className="relative bg-gradient-to-r from-indigo-500 to-purple-500 p-6 rounded-xl mb-6 shadow-md">
             <div className="absolute top-0 left-0 w-full h-full bg-opacity-10 bg-white rounded-xl" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
             <div className="relative z-10 text-center">
@@ -127,7 +125,7 @@ const PayablePage = () => {
             </div>
           </div>
 
-          {/* Search Box with Button */}
+          {/* Search Box */}
           <div className="mb-8">
             <label className="block text-lg text-gray-800 font-semibold mb-2 text-center" htmlFor="customerSearch">Search Customer</label>
             <div className="flex items-center justify-center">
@@ -166,8 +164,8 @@ const PayablePage = () => {
             </button>
           </div>
 
-          {/* All Customer Accounts Table (Wrapped in Printable Class) */}
-          <div className="printable overflow-auto rounded-lg shadow-md">
+          {/* Accounts Table */}
+          <div className="printable overflow-auto rounded-lg shadow-md mt-4">
             <table className="min-w-full bg-white table-auto rounded-lg" ref={tableRef}>
               <thead>
               <tr className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
@@ -177,36 +175,46 @@ const PayablePage = () => {
               </tr>
               </thead>
               <tbody>
-              {Array.isArray(filteredAccounts) && filteredAccounts.length > 0 ? (
+              {filteredAccounts.length > 0 ? (
                   filteredAccounts.map((account) => (
-                      <tr key={account.id} className="hover:bg-indigo-50 transition duration-150 ease-in-out text-gray-700">
-                        <td className="px-6 py-4 text-md font-medium">{account.customerId.name}</td>
-                        <td className="px-6 py-4">{account.customerId.mobileNumber}</td>
-                        <td className="px-6 py-4">{Math.round(account.totalPayable - account.totalAmountRecevied)}</td>
+                      <tr key={account._id} className="hover:bg-indigo-50 transition">
+                        <td className="px-6 py-4">{account.name}</td>
+                        <td className="px-6 py-4">{account.mobileNumber}</td>
+                        <td className="px-6 py-4">
+                         {account.totalCustomerPendingAmount.toFixed(2)}
+                        </td>
                       </tr>
                   ))
               ) : (
                   <tr>
-                    <td colSpan="3" className="text-center px-6 py-4 text-md font-medium text-gray-600">No accounts found.</td>
+                    <td colSpan="3" className="text-center px-6 py-4 text-md font-medium text-gray-600">No accounts found.
+                      {loading && (
+                        <div className="flex justify-center items-center mt-8">
+                          <div className="relative flex justify-center items-center">
+
+                            <div className="container">
+                              <div className="folder">
+                                <div className="top"></div>
+                                <div className="bottom"></div>
+                              </div>
+                              <div className="title">please wait your data calculate ...</div>
+                            </div>
+
+                          </div>
+                        </div>
+                    )}</td>
                   </tr>
               )}
               </tbody>
             </table>
           </div>
 
-          {/* Display Total Pending Amount for All Accounts */}
+          {/* Total Pending Amount */}
           <div className="mt-4 text-right text-lg font-bold text-gray-800">
-            Total Pending Amount for All Accounts: ₹{getTotalPendingAmountForAllAccounts().toFixed(2)}
+            Total Pending Amount for All Accounts: {getTotalPendingAmountForAllAccounts().toFixed(2)}
           </div>
 
-          {/* Loading Spinner */}
-          {loading && (
-              <div className="flex justify-center items-center mt-8">
-                <div className="relative flex justify-center items-center">
-                  <p className="text-lg text-indigo-700 font-semibold">Loading...</p>
-                </div>
-              </div>
-          )}
+
 
           {/* Error Message */}
           {error && <p className="text-red-600 mt-6 text-md font-semibold">{error}</p>}

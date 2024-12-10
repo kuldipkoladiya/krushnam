@@ -217,9 +217,17 @@ const SearchPage = () => {
 
                 {/* Show loading spinner */}
                 {loading && (
-                    <div className="flex justify-center items-center min-h-screen">
+                    <div className="flex justify-center items-center mt-8">
                         <div className="relative flex justify-center items-center">
-                            <img src={logoImage} className="rounded-full h-28 w-28 bg-white animate-ping" alt="Loading" />
+
+                            <div className="container">
+                                <div className="folder">
+                                    <div className="top"></div>
+                                    <div className="bottom"></div>
+                                </div>
+                                <div className="title">please wait your data calculate ...</div>
+                            </div>
+
                         </div>
                     </div>
                 )}
