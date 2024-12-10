@@ -14,7 +14,7 @@ const PayablePage = () => {
   const navigate = useNavigate();
   const tableRef = useRef();
 
-  const fetchAllAccounts = async () => {
+  const fetchAllAccounts = async (retry = false) => {
     setLoading(true);
     try {
       const response = await fetch('https://shreeji-be.vercel.app/v1/user/customerAccount/');
@@ -27,11 +27,18 @@ const PayablePage = () => {
         setAllAccounts([]);
         setFilteredAccounts([]);
       }
+      setError(''); // Clear any previous error messages
     } catch (err) {
-      setError('Error fetching all accounts.');
-      console.error(err);
+      if (!retry) {
+        console.warn('Retrying fetchAllAccounts...');
+        fetchAllAccounts(true); // Retry the API call once
+      } else {
+        setError('Error fetching all accounts.');
+        console.error(err);
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
