@@ -269,7 +269,7 @@ const MonthlyBillPage = () => {
                 sheet2: parseFloat(sheet2),
                 date: sheetDate,
             };
-            console.log("=====requestBody====>", requestBody);
+
 
             const response = await fetch('https://shreeji-be.vercel.app/v1/user/extra/', {
                 method: 'POST',
@@ -289,9 +289,10 @@ const MonthlyBillPage = () => {
             setIsSaved(true);
 
             // Refresh pending amount
-            if (customerName) {
-                await fetchCustomerAccountDetails(customerName); // Refresh pending amount after saving
+            if (result?.data?.customerId) {
+                await fetchCustomerAccountDetails(result?.data?.customerId); // Refresh pending amount after saving
             }
+            await handleSearch(new Event('submit'));
         } catch (err) {
             setError('Error saving sheet data. Please try again.');
             console.error('Error saving sheet data:', err);
@@ -322,12 +323,15 @@ const MonthlyBillPage = () => {
             });
 
             if (!response.ok) throw new Error('Failed to update sheet data');
-            console.log('Sheet data updated successfully');
+            const result = await response.json();
+            console.log('Sheet data updated successfully',result);
 
             // Refresh pending amount
-            if (customerName) {
-                await fetchCustomerAccountDetails(customerName); // Refresh pending amount after updating
+            if (result?.data?.customerId) {
+                await fetchCustomerAccountDetails(result?.data?.customerId); // Refresh pending amount after saving
             }
+            await handleSearch(new Event('submit'));
+
         } catch (err) {
             setError('Error updating sheet data. Please try again.');
             console.error('Error updating sheet data:', err);
