@@ -65,7 +65,7 @@ const SearchPage = () => {
     const handleSuggestionClick = (suggestion) => {
         setSearchQuery(suggestion.customerId?.name); // Autofill input with the selected suggestion (customer name)
         setSuggestions([]); // Clear suggestions after selection
-        handleInvoiceClick(suggestion._id); // Navigate to the InvoicePage when a suggestion is clicked
+        handleInvoiceClick(suggestion._id || suggestion.id); // Navigate to the InvoicePage when a suggestion is clicked
     };
 
     // Function to handle invoice row click and navigate to invoice page
