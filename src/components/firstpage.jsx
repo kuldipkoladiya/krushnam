@@ -205,7 +205,7 @@ const Firstpage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!customerName || products.some(p => !p.productId || !p.quantity || !p.price)) {
+        if (!customerName || products.some(p => !p.productId || !p.quantity )) {
             alert('Please fill in all the required fields.');
             return;
         }
