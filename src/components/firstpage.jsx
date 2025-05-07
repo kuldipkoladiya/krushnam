@@ -372,7 +372,7 @@ const Firstpage = () => {
         e.preventDefault();
 
         // Check for required fields
-        if (!customerName || products.some(p => !p.productId || !p.quantity || !p.price)) {
+        if (!customerName || products.some(p => !p.productId || !p.quantity)) {
             alert('Please fill in all the required fields.');
             return;
         }
