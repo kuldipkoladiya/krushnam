@@ -26,7 +26,7 @@ const ExtraBillPage = () => {
     useEffect(() => {
         const fetchCustomers = async () => {
             try {
-                const response = await fetch('https://shreeji-be.vercel.app/v1/user/customer/');
+                const response = await fetch('https://krushnam-be.vercel.app//v1/user/customer/');
                 if (!response.ok) throw new Error('Failed to fetch customers');
                 const customerData = await response.json();
                 setCustomers(customerData.data || []);
@@ -134,7 +134,7 @@ const ExtraBillPage = () => {
         const requestData = { customerId, fromDate, toDate };
 
         try {
-            const response = await fetch('https://shreeji-be.vercel.app/v1/user/extra/get-extra-by-date', {
+            const response = await fetch('https://krushnam-be.vercel.app//v1/user/extra/get-extra-by-date', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestData),
@@ -169,7 +169,7 @@ const ExtraBillPage = () => {
             setLoading(true);
             setError('');
             try {
-                const response = await fetch(`https://shreeji-be.vercel.app/v1/user/extra/${invoiceToDelete}`, {
+                const response = await fetch(`https://krushnam-be.vercel.app//v1/user/extra/${invoiceToDelete}`, {
                     method: 'DELETE',
                 });
                 if (!response.ok) throw new Error('Failed to delete invoice');

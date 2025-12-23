@@ -27,7 +27,7 @@ const Firstpage = () => {
     useEffect(() => {
         const fetchLastBillNumber = async () => {
             try {
-                const response = await fetch('https://shreeji-be.vercel.app/v1/user/invoice/');
+                const response = await fetch('https://krushnam-be.vercel.app//v1/user/invoice/');
                 if (!response.ok) throw new Error('Failed to fetch invoice data');
 
                 const invoiceData = await response.json();
@@ -51,7 +51,7 @@ const Firstpage = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('https://shreeji-be.vercel.app/v1/user/product/');
+                const response = await fetch('https://krushnam-be.vercel.app//v1/user/product/');
                 if (!response.ok) throw new Error('Failed to fetch products');
                 const productData = await response.json();
                 setAvailableProducts(Array.isArray(productData.data) ? productData.data : []);
@@ -65,7 +65,7 @@ const Firstpage = () => {
     useEffect(() => {
         const fetchCustomers = async () => {
             try {
-                const response = await fetch('https://shreeji-be.vercel.app/v1/user/customer/');
+                const response = await fetch('https://krushnam-be.vercel.app//v1/user/customer/');
                 if (!response.ok) throw new Error('Failed to fetch customers');
                 const customerData = await response.json();
                 setCustomers(customerData.data || []);
@@ -221,7 +221,7 @@ const Firstpage = () => {
 
             // Create new customer if not found
             if (!customerIdToUse) {
-                const customerResponse = await fetch('https://shreeji-be.vercel.app/v1/user/customer/', {
+                const customerResponse = await fetch('https://krushnam-be.vercel.app//v1/user/customer/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(customerData),
@@ -238,7 +238,7 @@ const Firstpage = () => {
                 console.log("=====customerIdToUse====>", customerIdToUse);
             } else {
                 // Fetch existing customer to ensure we have the latest data
-                const fetchCustomerResponse = await fetch(`https://shreeji-be.vercel.app/v1/user/customer/${customerIdToUse}`);
+                const fetchCustomerResponse = await fetch(`https://krushnam-be.vercel.app//v1/user/customer/${customerIdToUse}`);
                 if (!fetchCustomerResponse.ok) {
                     const errorText = await fetchCustomerResponse.text();
                     console.error('Fetch customer error:', errorText);
@@ -250,7 +250,7 @@ const Firstpage = () => {
             }
 
             // Create customer account
-            const accountResponse = await fetch('https://shreeji-be.vercel.app/v1/user/customerAccount/', {
+            const accountResponse = await fetch('https://krushnam-be.vercel.app//v1/user/customerAccount/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -277,7 +277,7 @@ const Firstpage = () => {
                 grandtotal: grandTotal,
             };
 
-            const invoiceResponse = await fetch('https://shreeji-be.vercel.app/v1/user/invoice/', {
+            const invoiceResponse = await fetch('https://krushnam-be.vercel.app//v1/user/invoice/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(invoiceData),
@@ -394,7 +394,7 @@ const Firstpage = () => {
 
             // Update existing customer
             if (customerIdToUse) {
-                await fetch(`https://shreeji-be.vercel.app/v1/user/customer/${customerIdToUse}`, {
+                await fetch(`https://krushnam-be.vercel.app//v1/user/customer/${customerIdToUse}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(customerData),
@@ -415,7 +415,7 @@ const Firstpage = () => {
             };
 
             // Update invoice
-            const invoiceResponse = await fetch(`https://shreeji-be.vercel.app/v1/user/invoice/${invoiceId}`, {
+            const invoiceResponse = await fetch(`https://krushnam-be.vercel.app//v1/user/invoice/${invoiceId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(invoiceData),

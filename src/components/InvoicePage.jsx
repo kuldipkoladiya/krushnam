@@ -22,7 +22,7 @@ const InvoicePage = () => {
 
         const fetchProducts = async () => {
             try {
-                const response = await fetch('https://shreeji-be.vercel.app/v1/user/product/');
+                const response = await fetch('https://krushnam-be.vercel.app//v1/user/product/');
                 if (!response.ok) throw new Error('Failed to fetch products');
                 const productData = await response.json();
                 setAvailableProducts(productData.data || []);

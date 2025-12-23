@@ -22,7 +22,7 @@ const SearchPage = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch('https://shreeji-be.vercel.app/v1/user/invoice/');
+            const response = await fetch('https://krushnam-be.vercel.app//v1/user/invoice/');
             if (!response.ok) throw new Error('Failed to fetch invoices');
             const result = await response.json();
             setSearchResults(result.data || []);
@@ -47,7 +47,7 @@ const SearchPage = () => {
             setLoading(true);
             setError('');
             try {
-                const response = await fetch(`https://shreeji-be.vercel.app/v1/user/invoice/get-search/${value}`);
+                const response = await fetch(`https://krushnam-be.vercel.app//v1/user/invoice/get-search/${value}`);
                 if (!response.ok) throw new Error('Failed to fetch suggestions');
                 const result = await response.json();
                 setSuggestions(result.data || []); // Set suggestions for matching invoices
@@ -73,7 +73,7 @@ const SearchPage = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch(`https://shreeji-be.vercel.app/v1/user/invoice/${invoiceId}`);
+            const response = await fetch(`https://krushnam-be.vercel.app//v1/user/invoice/${invoiceId}`);
             if (!response.ok) throw new Error('Failed to fetch invoice data');
             const result = await response.json();
             navigate('/invoice', { state: { invoiceData: result.data } }); // Navigate to InvoicePage
@@ -90,7 +90,7 @@ const SearchPage = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch(`https://shreeji-be.vercel.app/v1/user/invoice/get-search/${searchQuery}`);
+            const response = await fetch(`https://krushnam-be.vercel.app//v1/user/invoice/get-search/${searchQuery}`);
             if (!response.ok) throw new Error('Failed to fetch search results');
             const result = await response.json();
             setSearchResults(result.data || []);
@@ -114,7 +114,7 @@ const SearchPage = () => {
             setLoading(true);
             setError('');
             try {
-                const response = await fetch(`https://shreeji-be.vercel.app/v1/user/invoice/${invoiceToDelete}`, {
+                const response = await fetch(`https://krushnam-be.vercel.app//v1/user/invoice/${invoiceToDelete}`, {
                     method: 'DELETE',
                 });
                 if (!response.ok) throw new Error('Failed to delete invoice');
