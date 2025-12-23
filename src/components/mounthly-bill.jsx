@@ -64,7 +64,7 @@ const MonthlyBillPage = () => {
             setLoading(true);
             setError('');
             try {
-                const response = await fetch('https://krushnam-be.vercel.app//v1/user/customer/');
+                const response = await fetch('https://krushnam-be.vercel.app/v1/user/customer/');
                 if (!response.ok) throw new Error('Failed to fetch customer suggestions');
                 const result = await response.json();
                 const filteredSuggestions = result.data.filter(customer =>
@@ -181,7 +181,7 @@ const MonthlyBillPage = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch(`https://krushnam-be.vercel.app//v1/user/customerAccount/get-by-id/${customerId}`);
+            const response = await fetch(`https://krushnam-be.vercel.app/v1/user/customerAccount/get-by-id/${customerId}`);
             if (!response.ok) throw new Error('Failed to fetch customer account details');
 
             const result = await response.json();
@@ -213,7 +213,7 @@ const MonthlyBillPage = () => {
         setError('');
         const requestBody = { fromDate, toDate, customerId };
         try {
-            const response = await fetch('https://krushnam-be.vercel.app//v1/user/invoice/get-invoices-by-date', {
+            const response = await fetch('https://krushnam-be.vercel.app/v1/user/invoice/get-invoices-by-date', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
@@ -233,7 +233,7 @@ const MonthlyBillPage = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await fetch(`https://krushnam-be.vercel.app//v1/user/invoice/${invoiceId}`);
+            const response = await fetch(`https://krushnam-be.vercel.app/v1/user/invoice/${invoiceId}`);
             if (!response.ok) throw new Error('Failed to fetch invoice data');
             const result = await response.json();
             navigate('/invoice', { state: { invoiceData: result.data } });
@@ -271,7 +271,7 @@ const MonthlyBillPage = () => {
             };
 
 
-            const response = await fetch('https://krushnam-be.vercel.app//v1/user/extra/', {
+            const response = await fetch('https://krushnam-be.vercel.app/v1/user/extra/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
@@ -316,7 +316,7 @@ const MonthlyBillPage = () => {
             };
             console.log("=====requestBody for update====>", requestBody);
 
-            const response = await fetch(`https://krushnam-be.vercel.app//v1/user/extra/${extraId}`, {
+            const response = await fetch(`https://krushnam-be.vercel.app/v1/user/extra/${extraId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),

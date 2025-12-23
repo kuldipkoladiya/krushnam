@@ -32,7 +32,7 @@ const AccountsPage = () => {
     useEffect(() => {
         const fetchCustomers = async () => {
             try {
-                const response = await fetch('https://krushnam-be.vercel.app//v1/user/customer/');
+                const response = await fetch('https://krushnam-be.vercel.app/v1/user/customer/');
                 if (!response.ok) throw new Error('Failed to fetch customers');
                 const customerData = await response.json();
                 setCustomers(customerData.data || []);
@@ -62,7 +62,7 @@ const AccountsPage = () => {
     // Fetch customer account ID when a suggestion is clicked or selected
     const fetchCustomerAccountId = async (name) => {
         try {
-            const response = await fetch(`https://krushnam-be.vercel.app//v1/user/customerAccount/get-by-name/${encodeURIComponent(name)}`);
+            const response = await fetch(`https://krushnam-be.vercel.app/v1/user/customerAccount/get-by-name/${encodeURIComponent(name)}`);
             if (response.ok) {
                 const accountData = await response.json();
                 if (accountData.data && accountData.data.id) {
@@ -121,7 +121,7 @@ const AccountsPage = () => {
     // Fetch transaction details using customerTransactionId
     const fetchTransactionDetails = async (id) => {
         try {
-            const response = await fetch(`https://krushnam-be.vercel.app//v1/user/customerTransaction/${id}`);
+            const response = await fetch(`https://krushnam-be.vercel.app/v1/user/customerTransaction/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setTransactionDetails(data.data);
@@ -163,7 +163,7 @@ const AccountsPage = () => {
 
         try {
             // Create a new transaction
-            const transactionResponse = await fetch('https://krushnam-be.vercel.app//v1/user/customerTransaction/', {
+            const transactionResponse = await fetch('https://krushnam-be.vercel.app/v1/user/customerTransaction/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

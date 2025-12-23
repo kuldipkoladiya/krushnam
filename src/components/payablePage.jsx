@@ -17,7 +17,7 @@ const PayablePage = () => {
   const fetchAllAccounts = async (retry = false) => {
     setLoading(true);
     try {
-      const response = await fetch('https://krushnam-be.vercel.app//v1/user/customerAccount/');
+      const response = await fetch('https://krushnam-be.vercel.app/v1/user/customerAccount/');
       if (!response.ok) throw new Error('Failed to fetch all accounts');
       const result = await response.json();
       if (Array.isArray(result.data)) {
